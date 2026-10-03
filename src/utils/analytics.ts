@@ -95,7 +95,41 @@ export const trackEvent = (eventName: string, params?: Record<string, any>): voi
 };
 
 /**
- * Tracks Resume PDF download / view events with exact custom parameters
+ * Sends a background email notification to vasudevanr.dev@gmail.com when resume is downloaded
+ */
+const sendResumeEmailAlert = (linkText: string): void => {
+  const targetEmail = import.meta.env.VITE_NOTIFICATION_EMAIL || 'vasudevanr.dev@gmail.com';
+
+  if (typeof window === 'undefined') return;
+
+  try {
+    fetch(`https://formsubmit.co/ajax/${targetEmail}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({
+        _subject: '📄 Alert: Someone Downloaded Your Resume!',
+        _captcha: 'false',
+        _template: 'table',
+        Notification: 'Resume PDF Downloaded',
+        FileName: 'Vasudevan_R_Resume.pdf',
+        LinkText: linkText,
+        Timestamp: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) + ' (IST)',
+        PageURL: window.location.href,
+        UserAgent: navigator.userAgent,
+      }),
+    })
+      .then(() => console.log(`[Email Alert Dispatched] Background notification sent to ${targetEmail}`))
+      .catch((err) => console.log('[Email Alert Notice]', err));
+  } catch (err) {
+    // Non-blocking notice swallow
+  }
+};
+
+/**
+ * Tracks Resume PDF download / view events with exact custom parameters & sends email notification
  */
 export const trackResumeDownload = (linkText: string = 'Resume'): void => {
   const payload = {
@@ -109,6 +143,7 @@ export const trackResumeDownload = (linkText: string = 'Resume'): void => {
   console.log('[GA4 Event Triggered] resume_download:', payload);
 
   trackEvent('resume_download', payload);
+  sendResumeEmailAlert(linkText);
 };
 
 /**
