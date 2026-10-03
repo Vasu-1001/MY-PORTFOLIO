@@ -10,6 +10,22 @@ declare global {
 const GA_MEASUREMENT_ID = import.meta.env.VITE_GA_MEASUREMENT_ID;
 
 /**
+ * Ensures dataLayer array and window.gtag stub function exist on window object.
+ */
+const getGtag = (): ((...args: any[]) => void) | null => {
+  if (typeof window === 'undefined') return null;
+
+  window.dataLayer = window.dataLayer || [];
+  if (!window.gtag) {
+    window.gtag = function () {
+      // eslint-disable-next-line prefer-rest-params
+      window.dataLayer.push(arguments);
+    };
+  }
+  return window.gtag;
+};
+
+/**
  * Initializes Google Analytics 4 script asynchronously.
  * Only runs if VITE_GA_MEASUREMENT_ID is provided.
  */
@@ -21,6 +37,9 @@ export const initGA = (): void => {
     return;
   }
 
+  // Ensure window.gtag stub exists
+  getGtag();
+
   // Prevent loading script multiple times
   if (document.getElementById('ga-script')) return;
 
@@ -30,26 +49,34 @@ export const initGA = (): void => {
   script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
   document.head.appendChild(script);
 
-  window.dataLayer = window.dataLayer || [];
-  window.gtag = function () {
-    // eslint-disable-next-line prefer-rest-params
-    window.dataLayer.push(arguments);
-  };
-
-  window.gtag('js', new Date());
-  window.gtag('config', GA_MEASUREMENT_ID, {
-    send_page_view: true,
-  });
+  if (window.gtag) {
+    window.gtag('js', new Date());
+    window.gtag('config', GA_MEASUREMENT_ID, {
+      send_page_view: true,
+    });
+  }
 };
 
 /**
- * Tracks custom event in GA4
+ * Tracks custom event in GA4 reliably with beacon transport.
  */
 export const trackEvent = (eventName: string, params?: Record<string, any>): void => {
-  if (typeof window !== 'undefined' && window.gtag && GA_MEASUREMENT_ID) {
-    window.gtag('event', eventName, params);
-  } else if (import.meta.env.DEV) {
-    console.log(`[Analytics Event] ${eventName}:`, params);
+  if (typeof window === 'undefined' || !GA_MEASUREMENT_ID) {
+    if (import.meta.env.DEV) {
+      console.log(`[Analytics Event - DEV/No ID] ${eventName}:`, params);
+    }
+    return;
+  }
+
+  // Ensure GA initialization and dataLayer stub exist
+  initGA();
+
+  const gtag = getGtag();
+  if (gtag) {
+    gtag('event', eventName, {
+      transport_type: 'beacon',
+      ...params,
+    });
   }
 };
 
@@ -62,12 +89,6 @@ export const trackResumeDownload = (linkText: string = 'Resume'): void => {
     link_text: linkText,
     file_extension: 'pdf',
     link_url: '/resume.pdf',
-  });
-  trackEvent('file_download', {
-    file_name: 'Vasudevan_R_Resume.pdf',
-    file_extension: 'pdf',
-    link_url: '/resume.pdf',
-    link_text: linkText,
   });
 };
 

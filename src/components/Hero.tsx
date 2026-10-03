@@ -11,6 +11,7 @@ import {
 import { personalInfo } from '../data/portfolioData';
 import { GithubIcon, LinkedinIcon, LeetCodeIcon, CodeChefIcon } from './Icons';
 import { useTheme } from '../context/ThemeContext';
+import { trackResumeDownload } from '../utils/analytics';
 
 interface HeroProps {
   onOpenResume: () => void;
@@ -146,7 +147,10 @@ export const Hero: React.FC<HeroProps> = ({ onOpenResume }) => {
             >
               {/* Primary Download Resume with Glowing Aura */}
               <button
-                onClick={onOpenResume}
+                onClick={() => {
+                  trackResumeDownload('Resume');
+                  onOpenResume();
+                }}
                 className={`inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-bold text-sm transition-all duration-200 hover:-translate-y-0.5 cursor-pointer ${
                   isDark
                     ? 'bg-white hover:bg-slate-100 text-slate-950 shadow-[0_0_25px_rgba(56,189,248,0.25)] hover:shadow-[0_0_35px_rgba(56,189,248,0.4)]'

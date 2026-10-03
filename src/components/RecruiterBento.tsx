@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { personalInfo } from '../data/portfolioData';
 import { useTheme } from '../context/ThemeContext';
+import { trackResumeDownload } from '../utils/analytics';
 
 interface RecruiterBentoProps {
   onOpenResume: () => void;
@@ -48,7 +49,10 @@ export const RecruiterBento: React.FC<RecruiterBentoProps> = ({ onOpenResume }) 
 
           <div className="flex items-center gap-2">
             <button
-              onClick={onOpenResume}
+              onClick={() => {
+                trackResumeDownload('Resume');
+                onOpenResume();
+              }}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs transition-all shadow-md cursor-pointer"
             >
               <FileText className="w-3.5 h-3.5" />
