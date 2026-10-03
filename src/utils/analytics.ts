@@ -56,12 +56,18 @@ export const trackEvent = (eventName: string, params?: Record<string, any>): voi
 /**
  * Tracks Resume PDF download / view events
  */
-export const trackResumeDownload = (source: string = 'General'): void => {
+export const trackResumeDownload = (linkText: string = 'Resume'): void => {
+  trackEvent('resume_download', {
+    file_name: 'Vasudevan_R_Resume.pdf',
+    link_text: linkText,
+    file_extension: 'pdf',
+    link_url: '/resume.pdf',
+  });
   trackEvent('file_download', {
     file_name: 'Vasudevan_R_Resume.pdf',
     file_extension: 'pdf',
     link_url: '/resume.pdf',
-    download_source: source,
+    link_text: linkText,
   });
 };
 

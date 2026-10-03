@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, FileText, ArrowUpRight, Palette, Check } from 'lucide-react';
 import { navItems, personalInfo } from '../data/portfolioData';
 import { useTheme, type ThemeMode } from '../context/ThemeContext';
+import { trackResumeDownload } from '../utils/analytics';
 
 interface NavbarProps {
   onOpenResume: () => void;
@@ -218,7 +219,10 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenResume }) => {
 
           {/* Resume Button */}
           <button
-            onClick={onOpenResume}
+            onClick={() => {
+              trackResumeDownload('Resume');
+              onOpenResume();
+            }}
             className={`group inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-200 shadow-sm cursor-pointer ${
               isDark
                 ? 'bg-slate-900 hover:bg-slate-800 text-slate-100 border border-slate-700/80 hover:border-slate-600'
@@ -323,6 +327,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenResume }) => {
 
               <button
                 onClick={() => {
+                  trackResumeDownload('Resume');
                   setMobileMenuOpen(false);
                   onOpenResume();
                 }}
