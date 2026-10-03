@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowRight,
   Download,
@@ -17,8 +17,23 @@ interface HeroProps {
   onOpenResume: () => void;
 }
 
+const runningRoles = [
+  'Java Full Stack Developer',
+  'Spring Boot & React Specialist',
+  'AI / ML & RAG Engineer',
+  'Cloud Architecture & DevOps',
+];
+
 export const Hero: React.FC<HeroProps> = ({ onOpenResume }) => {
   const { isDark } = useTheme();
+  const [roleIdx, setRoleIdx] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setRoleIdx((prev) => (prev + 1) % runningRoles.length);
+    }, 2400);
+    return () => clearInterval(timer);
+  }, []);
 
   const scrollToProjects = () => {
     const el = document.getElementById('projects');
@@ -32,12 +47,12 @@ export const Hero: React.FC<HeroProps> = ({ onOpenResume }) => {
     >
       {/* Ambient Blue Backglow Orbs */}
       <div
-        className={`absolute top-1/4 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[450px] rounded-full blur-[140px] pointer-events-none -z-10 animate-aurora-glow ${
+        className={`absolute top-1/4 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[320px] sm:w-[650px] h-[250px] sm:h-[450px] rounded-full blur-[70px] sm:blur-[140px] pointer-events-none -z-10 animate-aurora-glow will-change-transform ${
           isDark ? 'bg-blue-600/[0.10]' : 'bg-blue-400/[0.06]'
         }`}
       />
       <div
-        className={`absolute top-1/3 right-1/4 w-[550px] h-[450px] rounded-full blur-[150px] pointer-events-none -z-10 animate-aurora-glow ${
+        className={`absolute top-1/3 right-1/4 w-[280px] sm:w-[550px] h-[250px] sm:h-[450px] rounded-full blur-[70px] sm:blur-[150px] pointer-events-none -z-10 animate-aurora-glow will-change-transform ${
           isDark ? 'bg-sky-500/[0.08]' : 'bg-purple-400/[0.04]'
         }`}
         style={{ animationDelay: '3s' }}
@@ -69,7 +84,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenResume }) => {
                   isDark ? 'text-slate-200' : 'text-blue-900'
                 }`}
               >
-                Final-Year Student · Open to Internships & 2027 Graduate Roles
+                Final-Year Student · Open to Work
               </span>
             </motion.div>
 
@@ -96,7 +111,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenResume }) => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.15 }}
-                className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.06] text-gradient-name"
+                className="text-3xl min-[360px]:text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.06] text-gradient-name"
               >
                 {personalInfo.name}
               </motion.h1>
@@ -106,11 +121,20 @@ export const Hero: React.FC<HeroProps> = ({ onOpenResume }) => {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
-                className="pt-1"
+                className="pt-1 min-h-[40px] flex items-center overflow-hidden"
               >
-                <span className="text-xl sm:text-2xl lg:text-3xl font-bold text-gradient-aurora">
-                  AI-Enabled Java Full Stack Developer
-                </span>
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={roleIdx}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.3 }}
+                    className="text-xl sm:text-2xl lg:text-3xl font-bold text-gradient-aurora inline-block"
+                  >
+                    {runningRoles[roleIdx]}
+                  </motion.span>
+                </AnimatePresence>
               </motion.div>
             </div>
 
@@ -176,7 +200,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenResume }) => {
 
               {/* Clean Social Profiles Group */}
               <div
-                className={`flex items-center gap-2 sm:pl-2 pt-2 sm:pt-0 ${
+                className={`flex flex-wrap items-center gap-2 sm:pl-2 pt-2 sm:pt-0 ${
                   isDark ? 'sm:border-l sm:border-slate-800/80' : 'sm:border-l sm:border-[#E2E8F0]'
                 }`}
               >
@@ -194,7 +218,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenResume }) => {
                       href={s.href}
                       target={s.href.startsWith('mailto') ? undefined : '_blank'}
                       rel={s.href.startsWith('mailto') ? undefined : 'noopener noreferrer'}
-                      className={`p-2.5 rounded-xl transition-all hover:scale-105 ${
+                      className={`p-2.5 rounded-xl transition-all hover:scale-105 min-w-[38px] min-h-[38px] flex items-center justify-center ${
                         isDark
                           ? 'bg-slate-900/90 hover:bg-slate-800 border border-slate-800 hover:border-blue-500/50 text-slate-400 hover:text-white'
                           : 'bg-white hover:bg-slate-50 border border-[#E2E8F0] hover:border-blue-400 text-[#475569] hover:text-[#2563EB] shadow-sm'
@@ -219,7 +243,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenResume }) => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="relative w-full max-w-[270px] sm:max-w-[305px]"
+              className="relative w-full max-w-[260px] min-[360px]:max-w-[270px] sm:max-w-[305px]"
             >
               {/* Soft Ambient Blue Backglow */}
               <div
@@ -247,6 +271,9 @@ export const Hero: React.FC<HeroProps> = ({ onOpenResume }) => {
                   <img
                     src="/profile.jpg"
                     alt="Vasudevan R - Formal Portrait"
+                    width={305}
+                    height={381}
+                    decoding="async"
                     className="w-full h-full object-cover object-top filter contrast-[1.02] brightness-95 group-hover:scale-[1.02] transition-transform duration-500"
                     loading="eager"
                   />
@@ -284,9 +311,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenResume }) => {
                       >
                         Vasudevan R
                       </div>
-                      <div className="text-xs text-gradient-aurora font-mono font-semibold">
-                        Java Full Stack & AI Engineer
-                      </div>
+                     
                     </div>
                     <span
                       className={`text-[10px] font-mono px-2 py-0.5 rounded border ${

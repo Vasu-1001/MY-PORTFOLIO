@@ -140,7 +140,7 @@ export const Projects: React.FC = () => {
             </div>
 
             {/* Main Content Area */}
-            <div className="p-6 sm:p-9 lg:p-10 space-y-8">
+            <div className="p-4 sm:p-9 lg:p-10 space-y-6 sm:space-y-8">
               {/* Title & Elevator Pitch */}
               <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
                 <div className="space-y-2 max-w-3xl">
@@ -633,7 +633,7 @@ export const Projects: React.FC = () => {
                     exit={{ opacity: 0, scale: 0.96 }}
                     transition={{ duration: 0.3 }}
                     whileHover={{ y: -4 }}
-                    className={`group rounded-2xl p-6 sm:p-7 flex flex-col justify-between transition-all text-left backdrop-blur-md ${
+                    className={`group rounded-2xl p-4 sm:p-7 flex flex-col justify-between transition-all text-left backdrop-blur-md ${
                       isLight
                         ? 'bg-white border border-[#E2E8F0] shadow-[0_4px_20px_rgba(15,23,42,0.06)] hover:border-blue-400 hover:shadow-[0_8px_30px_rgba(15,23,42,0.1)]'
                         : 'bg-slate-900/80 border border-slate-800 hover:border-slate-700 hover:shadow-2xl'
@@ -724,7 +724,7 @@ export const Projects: React.FC = () => {
                       </div>
 
                       {/* Action Links */}
-                      <div className="flex items-center gap-3 pt-1">
+                      <div className="flex flex-wrap items-center gap-2.5 pt-1">
                         {project.liveUrl && (
                           <a
                             href={project.liveUrl}

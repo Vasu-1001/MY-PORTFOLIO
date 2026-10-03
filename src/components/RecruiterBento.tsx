@@ -47,7 +47,7 @@ export const RecruiterBento: React.FC<RecruiterBentoProps> = ({ onOpenResume }) 
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => {
                 trackResumeDownload('Resume');
@@ -80,7 +80,7 @@ export const RecruiterBento: React.FC<RecruiterBentoProps> = ({ onOpenResume }) 
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.35 }}
-            className={`rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 text-left backdrop-blur-md group ${
+            className={`rounded-2xl p-5 sm:p-6 flex flex-col justify-between transition-all duration-300 text-left backdrop-blur-md group ${
               isLight
                 ? 'bg-white border border-[#E2E8F0] shadow-[0_4px_20px_rgba(15,23,42,0.06)] hover:border-violet-300 hover:shadow-[0_8px_30px_rgba(139,92,246,0.12)]'
                 : 'rounded-2xl bg-slate-900/80 border border-slate-800 shadow-lg hover:border-violet-500/50 hover:shadow-[0_0_30px_rgba(139,92,246,0.15)]'
@@ -134,7 +134,7 @@ export const RecruiterBento: React.FC<RecruiterBentoProps> = ({ onOpenResume }) 
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.35, delay: 0.05 }}
-            className={`rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 text-left backdrop-blur-md group ${
+            className={`rounded-2xl p-5 sm:p-6 flex flex-col justify-between transition-all duration-300 text-left backdrop-blur-md group ${
               isLight
                 ? 'bg-white border border-[#E2E8F0] shadow-[0_4px_20px_rgba(15,23,42,0.06)] hover:border-indigo-300 hover:shadow-[0_8px_30px_rgba(99,102,241,0.12)]'
                 : 'rounded-2xl bg-slate-900/80 border border-slate-800 shadow-lg hover:border-indigo-500/50 hover:shadow-[0_0_30px_rgba(99,102,241,0.15)]'
@@ -188,7 +188,7 @@ export const RecruiterBento: React.FC<RecruiterBentoProps> = ({ onOpenResume }) 
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.35, delay: 0.1 }}
-            className={`rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 text-left backdrop-blur-md group ${
+            className={`rounded-2xl p-5 sm:p-6 flex flex-col justify-between transition-all duration-300 text-left backdrop-blur-md group ${
               isLight
                 ? 'bg-white border border-[#E2E8F0] shadow-[0_4px_20px_rgba(15,23,42,0.06)] hover:border-cyan-300 hover:shadow-[0_8px_30px_rgba(6,182,212,0.12)]'
                 : 'rounded-2xl bg-slate-900/80 border border-slate-800 shadow-lg hover:border-cyan-500/50 hover:shadow-[0_0_30px_rgba(6,182,212,0.15)]'
@@ -252,7 +252,7 @@ export const RecruiterBento: React.FC<RecruiterBentoProps> = ({ onOpenResume }) 
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.35, delay: 0.15 }}
-            className={`rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 text-left backdrop-blur-md group ${
+            className={`rounded-2xl p-5 sm:p-6 flex flex-col justify-between transition-all duration-300 text-left backdrop-blur-md group ${
               isLight
                 ? 'bg-white border border-[#E2E8F0] shadow-[0_4px_20px_rgba(15,23,42,0.06)] hover:border-amber-300 hover:shadow-[0_8px_30px_rgba(245,158,11,0.12)]'
                 : 'rounded-2xl bg-slate-900/80 border border-slate-800 shadow-lg hover:border-amber-500/50 hover:shadow-[0_0_30px_rgba(245,158,11,0.15)]'
@@ -305,7 +305,7 @@ export const RecruiterBento: React.FC<RecruiterBentoProps> = ({ onOpenResume }) 
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.35, delay: 0.2 }}
-            className={`rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 text-left backdrop-blur-md group ${
+            className={`rounded-2xl p-5 sm:p-6 flex flex-col justify-between transition-all duration-300 text-left backdrop-blur-md group ${
               isLight
                 ? 'bg-white border border-[#E2E8F0] shadow-[0_4px_20px_rgba(15,23,42,0.06)] hover:border-yellow-300 hover:shadow-[0_8px_30px_rgba(234,179,8,0.12)]'
                 : 'rounded-2xl bg-slate-900/80 border border-slate-800 shadow-lg hover:border-yellow-500/50 hover:shadow-[0_0_30px_rgba(234,179,8,0.15)]'
@@ -355,7 +355,7 @@ export const RecruiterBento: React.FC<RecruiterBentoProps> = ({ onOpenResume }) 
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.35, delay: 0.25 }}
-            className={`rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 text-left backdrop-blur-md group ${
+            className={`rounded-2xl p-5 sm:p-6 flex flex-col justify-between transition-all duration-300 text-left backdrop-blur-md group ${
               isLight
                 ? 'bg-white border border-[#E2E8F0] shadow-[0_4px_20px_rgba(15,23,42,0.06)] hover:border-emerald-300 hover:shadow-[0_8px_30px_rgba(16,185,129,0.12)]'
                 : 'rounded-2xl bg-slate-900/80 border border-slate-800 shadow-lg hover:border-emerald-500/50 hover:shadow-[0_0_30px_rgba(16,185,129,0.15)]'

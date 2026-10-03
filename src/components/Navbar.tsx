@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, FileText, ArrowUpRight, Palette, Check } from 'lucide-react';
 import { navItems, personalInfo } from '../data/portfolioData';
@@ -19,26 +19,69 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenResume }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
   const { theme, setTheme, isDark } = useTheme();
+  const paletteRef = useRef<HTMLDivElement>(null);
 
+  // Close menus on Escape key
   useEffect(() => {
-    const handleScroll = () => {
-      const sections = navItems.map((item) => item.href.substring(1));
-      const scrollPosition = window.scrollY + 140;
-
-      for (let i = sections.length - 1; i >= 0; i--) {
-        const sectionEl = document.getElementById(sections[i]);
-        if (sectionEl) {
-          const top = sectionEl.offsetTop;
-          if (scrollPosition >= top) {
-            setActiveSection(sections[i]);
-            break;
-          }
-        }
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setMobileMenuOpen(false);
+        setPaletteOpen(false);
       }
     };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+  // Close palette dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (paletteRef.current && !paletteRef.current.contains(e.target as Node)) {
+        setPaletteOpen(false);
+      }
+    };
+    if (paletteOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [paletteOpen]);
+
+  // Lock body vertical scroll when mobile drawer is open to prevent accidental background scroll
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [mobileMenuOpen]);
+
+  // High-performance IntersectionObserver for active section (zero layout thrashing during fast scroll)
+  useEffect(() => {
+    const sectionIds = navItems.map((item) => item.href.substring(1));
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+
+        if (visible.length > 0) {
+          setActiveSection(visible[0].target.id);
+        }
+      },
+      {
+        rootMargin: '-15% 0px -65% 0px',
+        threshold: [0, 0.2, 0.5],
+      }
+    );
+
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
   }, []);
 
   const handleNavClick = (href: string) => {
@@ -152,7 +195,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenResume }) => {
         {/* Right actions: Theme Palette Switcher + Resume Button */}
         <div className="hidden sm:flex items-center gap-3">
           {/* Theme Palette Switcher (Two Options: This Color and White Color) */}
-          <div className="relative">
+          <div ref={paletteRef} className="relative">
             <button
               onClick={() => setPaletteOpen(!paletteOpen)}
               className={`p-2 rounded-xl transition-colors flex items-center gap-1.5 text-xs font-medium cursor-pointer ${
@@ -241,24 +284,26 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenResume }) => {
         <div className="flex sm:hidden items-center gap-2">
           <button
             onClick={() => setPaletteOpen(!paletteOpen)}
-            className={`p-2 rounded-xl border ${
+            className={`min-w-[40px] min-h-[40px] p-2 rounded-xl border flex items-center justify-center cursor-pointer ${
               isDark
                 ? 'border-slate-800 bg-slate-900/60 text-blue-400'
                 : 'border-[#E2E8F0] bg-white text-blue-600 shadow-sm'
             }`}
-            aria-label="Theme palette"
+            aria-label="Toggle theme palette"
           >
             <Palette className="w-4 h-4" />
           </button>
 
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className={`p-2 rounded-xl border ${
+            className={`min-w-[40px] min-h-[40px] p-2 rounded-xl border flex items-center justify-center cursor-pointer ${
               isDark
                 ? 'border-slate-800 bg-slate-900/60 text-slate-300 hover:text-white'
                 : 'border-[#E2E8F0] bg-white text-slate-700 hover:text-[#0F172A] shadow-sm'
             }`}
-            aria-label="Toggle mobile menu"
+            aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-nav-menu"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
@@ -269,6 +314,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenResume }) => {
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
+            id="mobile-nav-menu"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
@@ -291,7 +337,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenResume }) => {
                     e.preventDefault();
                     handleNavClick(item.href);
                   }}
-                  className={`px-3 py-2.5 rounded-lg text-xs font-medium flex items-center justify-between ${
+                  className={`min-h-[42px] px-3 py-2.5 rounded-lg text-xs font-medium flex items-center justify-between transition-colors ${
                     activeSection === item.href.substring(1)
                       ? isDark
                         ? 'bg-blue-500/15 text-blue-300 border border-blue-500/30'
@@ -307,7 +353,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenResume }) => {
             </div>
 
             <div
-              className={`pt-3 border-t flex items-center justify-between ${
+              className={`pt-3 border-t flex flex-wrap items-center justify-between gap-2.5 ${
                 isDark ? 'border-slate-800' : 'border-[#E2E8F0]'
               }`}
             >
@@ -315,7 +361,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenResume }) => {
                 onClick={() => {
                   setTheme(theme === 'white' ? 'dark' : 'white');
                 }}
-                className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-xs ${
+                className={`flex items-center gap-2 px-3 py-2.5 rounded-lg border text-xs cursor-pointer min-h-[40px] ${
                   isDark
                     ? 'bg-slate-900 border-slate-800 text-slate-200'
                     : 'bg-white border-[#E2E8F0] text-[#0F172A] shadow-sm'
@@ -331,7 +377,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenResume }) => {
                   setMobileMenuOpen(false);
                   onOpenResume();
                 }}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-md"
+                className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-md cursor-pointer min-h-[40px]"
               >
                 <FileText className="w-3.5 h-3.5" />
                 <span>Resume</span>

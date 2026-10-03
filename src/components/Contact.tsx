@@ -168,7 +168,7 @@ export const Contact: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
           {/* Left Column: Direct Inquiries */}
           <div className="lg:col-span-5 space-y-6 text-left">
-            <div className={`rounded-2xl p-7 sm:p-8 space-y-6 shadow-xl transition-all ${
+            <div className={`rounded-2xl p-5 sm:p-8 space-y-6 shadow-xl transition-all ${
               isLight ? 'bg-white border border-[#E2E8F0] shadow-[0_4px_20px_rgba(15,23,42,0.06)]' : 'bg-slate-900/80 border border-slate-800 backdrop-blur-md'
             }`}>
               <div className="space-y-1">
@@ -199,9 +199,9 @@ export const Contact: React.FC = () => {
                   }`}>
                     <Mail className="w-5 h-5" />
                   </div>
-                  <div>
+                  <div className="min-w-0 flex-1">
                     <div className={`text-xs font-mono ${isLight ? 'text-[#64748B]' : 'text-slate-400'}`}>Official Email</div>
-                    <div className={`text-sm font-semibold transition-colors ${
+                    <div className={`text-sm font-semibold transition-colors truncate ${
                       isLight ? 'text-[#0F172A] group-hover:text-blue-600' : 'text-slate-200 group-hover:text-blue-300'
                     }`}>
                       {personalInfo.socials.email}
@@ -279,9 +279,9 @@ export const Contact: React.FC = () => {
                   }`}>
                     <LinkedinIcon className="w-5 h-5" />
                   </div>
-                  <div>
+                  <div className="min-w-0 flex-1">
                     <div className={`text-xs font-mono ${isLight ? 'text-[#64748B]' : 'text-slate-400'}`}>LinkedIn Network</div>
-                    <div className={`text-sm font-semibold transition-colors ${
+                    <div className={`text-sm font-semibold transition-colors truncate ${
                       isLight ? 'text-[#0F172A] group-hover:text-indigo-600' : 'text-slate-200 group-hover:text-indigo-300'
                     }`}>
                       linkedin.com/in/vasudevan-r-870a8a2a7
@@ -305,9 +305,9 @@ export const Contact: React.FC = () => {
                   }`}>
                     <GithubIcon className="w-5 h-5" />
                   </div>
-                  <div>
+                  <div className="min-w-0 flex-1">
                     <div className={`text-xs font-mono ${isLight ? 'text-[#64748B]' : 'text-slate-400'}`}>GitHub Profile</div>
-                    <div className={`text-sm font-semibold transition-colors ${
+                    <div className={`text-sm font-semibold transition-colors truncate ${
                       isLight ? 'text-[#0F172A] group-hover:text-blue-600' : 'text-slate-200 group-hover:text-white'
                     }`}>
                       github.com/Vasu-1001
@@ -334,7 +334,7 @@ export const Contact: React.FC = () => {
 
           {/* Right Column: Interactive Recruiter Message Dispatch */}
           <div className="lg:col-span-7">
-            <div className={`rounded-2xl p-7 sm:p-9 shadow-xl text-left transition-all ${
+            <div className={`rounded-2xl p-5 sm:p-9 shadow-xl text-left transition-all ${
               isLight ? 'bg-white border border-[#E2E8F0] shadow-[0_4px_20px_rgba(15,23,42,0.06)]' : 'bg-slate-900/80 border border-slate-800 backdrop-blur-md'
             }`}>
               <div className="flex items-center justify-between mb-6">

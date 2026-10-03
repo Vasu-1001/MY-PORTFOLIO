@@ -71,7 +71,7 @@ export const CodingProfiles: React.FC = () => {
                 viewport={{ once: true, margin: '-40px' }}
                 transition={{ duration: 0.4, delay: idx * 0.1 }}
                 whileHover={{ y: -5 }}
-                className={`group rounded-2xl p-7 flex flex-col justify-between transition-all duration-300 text-left ${
+                className={`group rounded-2xl p-5 sm:p-7 flex flex-col justify-between transition-all duration-300 text-left ${
                   isLight
                     ? 'bg-white border border-[#E2E8F0] shadow-[0_4px_20px_rgba(15,23,42,0.06)] hover:border-blue-400 hover:shadow-[0_8px_30px_rgba(15,23,42,0.1)]'
                     : 'bg-slate-900/70 border border-slate-800 hover:border-slate-700 hover:shadow-2xl'
@@ -121,9 +121,9 @@ export const CodingProfiles: React.FC = () => {
                   {profile.details && (
                     <div className={`mt-5 space-y-2.5 pt-4 border-t ${isLight ? 'border-[#E2E8F0]' : 'border-slate-800/80'}`}>
                       {profile.details.map((d) => (
-                        <div key={d.label} className="flex items-start justify-between gap-3 text-xs font-mono">
+                        <div key={d.label} className="flex flex-col min-[380px]:flex-row min-[380px]:items-start min-[380px]:justify-between gap-1 min-[380px]:gap-3 text-xs font-mono">
                           <span className={`shrink-0 ${isLight ? 'text-[#64748B]' : 'text-slate-400'}`}>{d.label}:</span>
-                          <span className={`font-medium text-right leading-snug ${isLight ? 'text-[#0F172A]' : 'text-slate-200'}`}>{d.value}</span>
+                          <span className={`font-medium min-[380px]:text-right leading-snug ${isLight ? 'text-[#0F172A]' : 'text-slate-200'}`}>{d.value}</span>
                         </div>
                       ))}
                     </div>
@@ -138,7 +138,7 @@ export const CodingProfiles: React.FC = () => {
                     href={profile.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl font-semibold text-xs transition-all duration-200 ${
+                    className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl font-semibold text-xs transition-all duration-200 cursor-pointer min-h-[38px] ${
                       isLight
                         ? 'bg-[#EFF6FF] hover:bg-[#2563EB] text-[#2563EB] hover:text-white border border-[#BFDBFE] hover:border-[#2563EB] shadow-sm'
                         : 'bg-slate-800 hover:bg-white text-slate-200 hover:text-slate-950'

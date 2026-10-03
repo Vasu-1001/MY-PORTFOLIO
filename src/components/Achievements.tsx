@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
+import React, { useState, useRef, useMemo } from 'react';
+import { motion } from 'framer-motion';
 import {
   Trophy,
   Mic,
@@ -67,9 +67,7 @@ export const Achievements: React.FC = () => {
   const { currentTheme } = useTheme();
   const isLight = currentTheme === 'white';
   const [activeTab, setActiveTab] = useState<CategoryTab['id']>('All');
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
-  const [scrollDistance, setScrollDistance] = useState<number>(0);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // All 13 interleaved items for the main awards showcase
   const allInterleaved = useMemo(() => getInterleavedAchievements(), []);
@@ -82,69 +80,30 @@ export const Achievements: React.FC = () => {
     return achievements.filter((item: AchievementItem) => item.category === activeTab);
   }, [activeTab, allInterleaved]);
 
-  // Recalculate horizontal scroll distance dynamically
-  const updateScrollDistance = () => {
-    if (trackRef.current) {
-      const trackWidth = trackRef.current.scrollWidth;
-      const viewportWidth = window.innerWidth;
-      const rightPadding = viewportWidth < 640 ? 32 : 96;
-      const distance = trackWidth - viewportWidth + rightPadding;
-      setScrollDistance(Math.max(0, distance));
+  const handlePrev = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: -360, behavior: 'smooth' });
     }
   };
 
-  useEffect(() => {
-    updateScrollDistance();
-    window.addEventListener('resize', updateScrollDistance);
-    const timer = setTimeout(updateScrollDistance, 250);
-    return () => {
-      window.removeEventListener('resize', updateScrollDistance);
-      clearTimeout(timer);
-    };
-  }, [displayedCards]);
-
-  // Bind Framer Motion scroll to the section
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ['start start', 'end end'],
-  });
-
-  const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 90,
-    damping: 24,
-    restDelta: 0.001,
-  });
-
-  // Map 0 -> 1 progress to 0 -> -scrollDistance
-  const x = useTransform(smoothProgress, [0, 1], [0, -scrollDistance]);
-
-  // Calculate container height so scrolling through is natural and comfortable
-  // Roughly 1px vertical scroll per 1px horizontal scroll + 1 viewport height
-  const containerHeight = scrollDistance > 0 ? scrollDistance * 1.15 + (typeof window !== 'undefined' ? window.innerHeight : 900) : 'auto';
-
-  const handlePrev = () => {
-    window.scrollBy({ top: -400, behavior: 'smooth' });
-  };
-
   const handleNext = () => {
-    window.scrollBy({ top: 400, behavior: 'smooth' });
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: 360, behavior: 'smooth' });
+    }
   };
 
   return (
     <section
-      ref={sectionRef}
       id="achievements"
-      style={{ height: typeof containerHeight === 'number' ? `${containerHeight}px` : containerHeight }}
-      className="relative select-none"
+      className="py-20 sm:py-24 relative select-none bg-slate-950/40"
     >
-      {/* Pinned Sticky Viewport (Locks in view while user scrolls through all cards) */}
-      <div className="sticky top-0 h-screen max-h-screen overflow-hidden flex flex-col justify-between py-6 sm:py-8 z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         {/* Background Ambience Glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[350px] bg-blue-600/[0.05] blur-3xl pointer-events-none rounded-full" />
 
         {/* TOP HEADER: Title, Category Tabs & Quick Controls */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full shrink-0">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-4">
+        <div className="w-full shrink-0 mb-8">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
             <div>
               <motion.div
                 initial={{ opacity: 0, y: 15 }}
@@ -169,7 +128,7 @@ export const Achievements: React.FC = () => {
               <p className={`text-xs sm:text-sm mt-1 max-w-2xl text-left ${
                 isLight ? 'text-[#475569]' : 'text-slate-400'
               }`}>
-                Scroll through to explore all hackathon victories, engineering challenges, world records, and sports championships.
+                Explore hackathon victories, engineering challenges, world records, and sports championships.
               </p>
             </div>
 
@@ -201,18 +160,9 @@ export const Achievements: React.FC = () => {
                 </button>
               </div>
 
-              {/* Progress bar inside header */}
-              <div className="hidden sm:flex flex-col gap-1 w-28">
-                <div className="flex justify-between text-[10px] font-mono text-slate-400">
-                  <span>PROGRESS</span>
-                  <span>{displayedCards.length} ITEMS</span>
-                </div>
-                <div className={`w-full h-1.5 rounded-full overflow-hidden ${isLight ? 'bg-[#E2E8F0]' : 'bg-slate-800'}`}>
-                  <motion.div
-                    style={{ scaleX: smoothProgress }}
-                    className="h-full bg-gradient-to-r from-blue-500 via-sky-400 to-cyan-300 origin-left"
-                  />
-                </div>
+              {/* Items Counter */}
+              <div className="hidden sm:flex items-center px-3 py-1.5 rounded-xl border text-xs font-mono text-slate-400 bg-slate-900/60 border-slate-800">
+                <span>{displayedCards.length} ITEMS</span>
               </div>
             </div>
           </div>
@@ -247,17 +197,16 @@ export const Achievements: React.FC = () => {
           </div>
         </div>
 
-        {/* MIDDLE SECTION: Horizontal Moving Cards Track (Tied directly to vertical scroll) */}
-        <div className="relative w-full overflow-hidden flex-1 flex items-center my-auto">
+        {/* MIDDLE SECTION: Horizontal Moving Cards Track */}
+        <div className="relative w-full overflow-hidden">
           {/* Subtle Edge Vignettes */}
-          <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-8 sm:w-20 bg-gradient-to-r from-[var(--bg-main)] via-[var(--bg-main)]/70 to-transparent z-20" />
-          <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 sm:w-20 bg-gradient-to-l from-[var(--bg-main)] via-[var(--bg-main)]/70 to-transparent z-20" />
+          <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-6 sm:w-12 bg-gradient-to-r from-[var(--bg-main)] via-[var(--bg-main)]/70 to-transparent z-20" />
+          <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-6 sm:w-12 bg-gradient-to-l from-[var(--bg-main)] via-[var(--bg-main)]/70 to-transparent z-20" />
 
           {/* Gliding Horizontal Track */}
-          <motion.div
-            ref={trackRef}
-            style={{ x }}
-            className="flex items-stretch gap-5 sm:gap-6 px-4 sm:px-12 w-max"
+          <div
+            ref={scrollContainerRef}
+            className="flex items-stretch gap-5 sm:gap-6 overflow-x-auto py-3 px-1 scrollbar-none snap-x cursor-grab active:cursor-grabbing"
           >
             {displayedCards.map((item: AchievementItem, idx: number) => (
               <EvenAchievementCard
@@ -266,23 +215,20 @@ export const Achievements: React.FC = () => {
                 isLight={isLight}
               />
             ))}
-          </motion.div>
+          </div>
         </div>
 
-        {/* BOTTOM FOOTER: Scroll guidance note and visual status cue */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full shrink-0 flex items-center justify-between text-xs font-mono text-slate-400 pt-1">
+        {/* BOTTOM FOOTER: Scroll guidance note */}
+        <div className="w-full shrink-0 flex items-center justify-between text-xs font-mono text-slate-400 pt-4 border-t border-slate-800/60 mt-4">
           <div className="flex items-center gap-2">
             <Sparkles className="w-3.5 h-3.5 text-sky-400" />
-            <span className="hidden sm:inline">
-              Scroll down to glide horizontally through all {displayedCards.length} awards • Continue scrolling to advance
-            </span>
-            <span className="sm:hidden">
-              Scroll down to view all awards
+            <span>
+              Use arrows or swipe horizontally to explore all {displayedCards.length} awards
             </span>
           </div>
 
           <div className="text-[11px] text-sky-400 font-semibold">
-            {scrollDistance > 0 ? 'Pinned Scroll Active ↓' : 'All Visible'}
+            {displayedCards.length} Cards Available
           </div>
         </div>
       </div>
@@ -496,7 +442,7 @@ const EvenAchievementCard: React.FC<EvenCardProps> = ({ item, isLight = false })
 
   return (
     <div
-      className={`group relative rounded-2xl p-5 flex flex-col justify-between transition-all duration-300 text-left shrink-0 w-[300px] sm:w-[340px] md:w-[360px] h-[330px] sm:h-[340px] ${
+      className={`group relative rounded-2xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 text-left shrink-0 w-[270px] min-[360px]:w-[300px] sm:w-[340px] md:w-[360px] h-[330px] sm:h-[340px] ${
         isLight
           ? 'bg-white border border-[#E2E8F0] shadow-[0_4px_20px_rgba(15,23,42,0.06)] hover:border-blue-400 hover:shadow-[0_8px_30px_rgba(15,23,42,0.1)]'
           : `bg-slate-900/90 backdrop-blur-md border border-slate-800 hover:border-blue-500/50 hover:shadow-[0_0_30px_rgba(56,189,248,0.15)] ${glowHover} ${

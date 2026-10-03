@@ -1,18 +1,27 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useTheme } from '../context/ThemeContext';
 
 export const ProgrammerBackground: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [mousePos, setMousePos] = useState({ x: -1000, y: -1000 });
+  const spotlightRef = useRef<HTMLDivElement>(null);
   const { isDark } = useTheme();
 
   useEffect(() => {
-    let animFrame: number;
+    // Skip listener on touch/coarse devices to save battery and GPU cycles
+    if (typeof window === 'undefined' || window.matchMedia('(pointer: coarse)').matches) {
+      return;
+    }
 
+    let animFrame: number;
     const handleMouseMove = (e: MouseEvent) => {
       cancelAnimationFrame(animFrame);
       animFrame = requestAnimationFrame(() => {
-        setMousePos({ x: e.clientX, y: e.clientY });
+        if (spotlightRef.current) {
+          spotlightRef.current.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate(-50%, -50%)`;
+          if (spotlightRef.current.style.opacity !== '1') {
+            spotlightRef.current.style.opacity = '1';
+          }
+        }
       });
     };
 
@@ -27,6 +36,7 @@ export const ProgrammerBackground: React.FC = () => {
     <div
       ref={containerRef}
       className="fixed inset-0 pointer-events-none overflow-hidden z-0 select-none transition-colors duration-500"
+      style={{ contain: 'strict', transform: 'translate3d(0, 0, 0)' }}
       aria-hidden="true"
     >
       {/* Dynamic Background Canvas */}
@@ -34,35 +44,33 @@ export const ProgrammerBackground: React.FC = () => {
 
       {/* Radiant Ambient Aurora Orbs */}
       <div
-        className={`absolute -top-32 -left-20 w-[650px] h-[550px] rounded-full blur-[150px] animate-aurora-glow transition-all duration-700 ${
+        className={`absolute -top-32 -left-20 w-[350px] sm:w-[650px] h-[350px] sm:h-[550px] rounded-full blur-[80px] sm:blur-[150px] animate-aurora-glow transition-all duration-700 will-change-transform ${
           isDark ? 'bg-violet-600/[0.12]' : 'bg-blue-400/[0.05]'
         }`}
       />
       <div
-        className={`absolute top-1/4 -right-28 w-[600px] h-[600px] rounded-full blur-[160px] animate-aurora-glow transition-all duration-700 ${
+        className={`absolute top-1/4 -right-28 w-[320px] sm:w-[600px] h-[320px] sm:h-[600px] rounded-full blur-[80px] sm:blur-[160px] animate-aurora-glow transition-all duration-700 will-change-transform ${
           isDark ? 'bg-cyan-500/[0.10]' : 'bg-violet-400/[0.04]'
         }`}
         style={{ animationDelay: '2s' }}
       />
       <div
-        className={`absolute bottom-1/3 left-10 w-[550px] h-[550px] rounded-full blur-[150px] animate-aurora-glow transition-all duration-700 ${
+        className={`absolute bottom-1/3 left-10 w-[300px] sm:w-[550px] h-[300px] sm:h-[550px] rounded-full blur-[80px] sm:blur-[150px] animate-aurora-glow transition-all duration-700 will-change-transform ${
           isDark ? 'bg-indigo-600/[0.08]' : 'bg-sky-400/[0.035]'
         }`}
         style={{ animationDelay: '4s' }}
       />
       <div
-        className={`absolute -bottom-36 right-1/4 w-[700px] h-[500px] rounded-full blur-[160px] transition-all duration-700 ${
+        className={`absolute -bottom-36 right-1/4 w-[350px] sm:w-[700px] h-[300px] sm:h-[500px] rounded-full blur-[80px] sm:blur-[160px] transition-all duration-700 will-change-transform ${
           isDark ? 'bg-emerald-500/[0.07]' : 'bg-emerald-400/[0.03]'
         }`}
       />
 
       {/* Dynamic Cursor Light Spotlight */}
       <div
-        className="absolute w-[650px] h-[650px] rounded-full pointer-events-none transition-transform duration-100 ease-out"
+        ref={spotlightRef}
+        className="absolute top-0 left-0 w-[650px] h-[650px] rounded-full pointer-events-none transition-opacity duration-300 opacity-0 will-change-transform"
         style={{
-          left: `${mousePos.x}px`,
-          top: `${mousePos.y}px`,
-          transform: 'translate(-50%, -50%)',
           background: isDark
             ? 'radial-gradient(circle at center, rgba(139, 92, 246, 0.12) 0%, rgba(6, 182, 212, 0.05) 35%, transparent 70%)'
             : 'radial-gradient(circle at center, rgba(37, 99, 235, 0.05) 0%, rgba(124, 58, 237, 0.02) 40%, transparent 70%)',

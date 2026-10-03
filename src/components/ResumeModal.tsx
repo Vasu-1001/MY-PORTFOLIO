@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   X,
@@ -27,69 +27,34 @@ interface ResumeModalProps {
 
 export const ResumeModal: React.FC<ResumeModalProps> = ({ isOpen, onClose }) => {
   const { isDark } = useTheme();
-  const [showPrompt, setShowPrompt] = useState(false);
-  const [downloaderName, setDownloaderName] = useState('');
-  const [downloaderEmail, setDownloaderEmail] = useState('');
-  const [promptError, setPromptError] = useState('');
 
-  const triggerDownload = (name: string, email: string) => {
-    trackResumeDownload('Resume', name, email);
+  // Escape key handler to close modal
+  useEffect(() => {
+    if (!isOpen) return;
 
-    // Trigger PDF download programmatically
-    const a = document.createElement('a');
-    a.href = personalInfo.resumePath;
-    a.download = 'Vasudevan_R_Resume.pdf';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  };
-
-  const handleDownloadClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    const saved = sessionStorage.getItem('downloader_info');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (parsed.name && parsed.email) {
-          triggerDownload(parsed.name, parsed.email);
-          return;
-        }
-      } catch {
-        // Fallthrough
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
       }
-    }
-    setShowPrompt(true);
-  };
+    };
 
-  const handlePromptSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!downloaderName.trim()) {
-      setPromptError('Please enter your name.');
-      return;
-    }
-    if (!downloaderEmail.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(downloaderEmail)) {
-      setPromptError('Please enter a valid official email address.');
-      return;
-    }
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
 
-    setPromptError('');
-    sessionStorage.setItem('downloader_info', JSON.stringify({ name: downloaderName, email: downloaderEmail }));
-    triggerDownload(downloaderName, downloaderEmail);
-    setShowPrompt(false);
-  };
+  // Lock body vertical scrolling when modal is active, restore on unmount
+  useEffect(() => {
+    if (isOpen) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [isOpen]);
 
   const handlePrint = () => {
-    const saved = sessionStorage.getItem('downloader_info');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        trackResumeDownload('PrintResume', parsed.name, parsed.email);
-      } catch {
-        trackResumeDownload('PrintResume');
-      }
-    } else {
-      trackResumeDownload('PrintResume');
-    }
+    trackResumeDownload('PrintResume');
     window.print();
   };
 
@@ -100,7 +65,12 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({ isOpen, onClose }) => 
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto print:p-0">
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Candidate Profile and ATS Resume"
+          className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-6 overflow-y-auto overscroll-contain print:p-0"
+        >
           {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
@@ -124,31 +94,33 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({ isOpen, onClose }) => 
           >
             {/* Modal Top Action Bar */}
             <div
-              className={`sticky top-0 z-20 flex items-center justify-between px-6 py-4 backdrop-blur-md border-b print:hidden ${
+              className={`sticky top-0 z-20 flex items-center justify-between px-3.5 sm:px-6 py-3 sm:py-4 backdrop-blur-md border-b print:hidden ${
                 isDark
                   ? 'bg-slate-950/90 border-slate-800'
                   : 'bg-white/95 border-[#E2E8F0] shadow-sm'
               }`}
             >
-              <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
                 <span
-                  className={`text-xs font-mono font-semibold uppercase tracking-wider ${
+                  className={`text-xs font-mono font-semibold uppercase tracking-wider truncate ${
                     isDark ? 'text-slate-300' : 'text-[#475569]'
                   }`}
                 >
-                  Candidate Profile • ATS-Optimized Brief
+                  <span className="hidden sm:inline">Candidate Profile • ATS-Optimized Brief</span>
+                  <span className="sm:hidden font-bold">ATS Resume</span>
                 </span>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
                 <button
                   onClick={handlePrint}
-                  className={`p-2 rounded-xl transition-colors cursor-pointer ${
+                  className={`p-2 rounded-xl transition-colors cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center ${
                     isDark
                       ? 'bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white'
                       : 'bg-slate-100 hover:bg-slate-200 text-[#475569] hover:text-[#0F172A]'
                   }`}
+                  aria-label="Print resume"
                   title="Print Resume"
                 >
                   <Printer className="w-4 h-4" />
@@ -156,19 +128,20 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({ isOpen, onClose }) => 
                 <a
                   href={personalInfo.resumePath}
                   download="Vasudevan_R_Resume.pdf"
-                  onClick={handleDownloadClick}
-                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer ${
+                  onClick={() => trackResumeDownload('Resume')}
+                  className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer min-h-[36px] ${
                     isDark
                       ? 'bg-white hover:bg-slate-100 text-slate-950'
                       : 'bg-[#2563EB] hover:bg-[#1D4ED8] text-white shadow-sm'
                   }`}
                 >
-                  <Download className="w-3.5 h-3.5" />
-                  <span>Download PDF</span>
+                  <Download className="w-3.5 h-3.5 shrink-0" />
+                  <span className="hidden min-[380px]:inline">Download PDF</span>
+                  <span className="min-[380px]:hidden">PDF</span>
                 </a>
                 <button
                   onClick={onClose}
-                  className={`p-2 rounded-xl transition-colors cursor-pointer ${
+                  className={`p-2 rounded-xl transition-colors cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center ${
                     isDark
                       ? 'text-slate-400 hover:text-white hover:bg-slate-800'
                       : 'text-slate-400 hover:text-[#0F172A] hover:bg-slate-100'
@@ -181,7 +154,7 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({ isOpen, onClose }) => 
             </div>
 
             {/* Document Body (Clean ATS Executive Resume Layout) */}
-            <div className="p-6 sm:p-10 space-y-7 text-left font-sans">
+            <div className="p-4 sm:p-10 space-y-6 sm:space-y-7 text-left font-sans">
               {/* Header / Contact Info */}
               <div className="border-b border-slate-800 pb-5 text-center print:border-black/30">
                 <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight print:text-black">
@@ -429,18 +402,18 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({ isOpen, onClose }) => 
                 }`}
               >
                 <div
-                  className={`text-xs font-mono flex items-center gap-1.5 ${
+                  className={`text-xs font-mono flex items-center gap-1.5 text-center sm:text-left ${
                     isDark ? 'text-slate-400' : 'text-[#64748B]'
                   }`}
                 >
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
                   <span>Final-Year Student • Open to Internships & 2027 Graduate Roles</span>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center justify-center sm:justify-end gap-2.5 w-full sm:w-auto">
                   <a
                     href={`mailto:${personalInfo.socials.email}?subject=Interview%20Invitation%20for%20Vasudevan%20R`}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition-all shadow-md cursor-pointer"
+                    className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition-all shadow-md cursor-pointer flex-1 sm:flex-initial min-h-[40px]"
                   >
                     <Mail className="w-4 h-4" />
                     <span>Schedule Interview</span>
@@ -449,8 +422,8 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({ isOpen, onClose }) => 
                   <a
                     href={personalInfo.resumePath}
                     download="Vasudevan_R_Resume.pdf"
-                    onClick={handleDownloadClick}
-                    className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs transition-all shadow-sm cursor-pointer ${
+                    onClick={() => trackResumeDownload('Resume')}
+                    className={`inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs transition-all shadow-sm cursor-pointer flex-1 sm:flex-initial min-h-[40px] ${
                       isDark
                         ? 'bg-white hover:bg-slate-100 text-slate-950'
                         : 'bg-slate-900 hover:bg-slate-800 text-white'
@@ -461,109 +434,6 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({ isOpen, onClose }) => 
                   </a>
                 </div>
               </div>
-
-            {/* Quick Verification / Downloader Info Prompt Modal */}
-            <AnimatePresence>
-              {showPrompt && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    onClick={() => setShowPrompt(false)}
-                    className="fixed inset-0 bg-black/75 backdrop-blur-sm"
-                  />
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                    className={`relative w-full max-w-md rounded-2xl p-6 sm:p-7 shadow-2xl z-10 text-left border ${
-                      isDark
-                        ? 'bg-slate-900 border-slate-700/80 text-white'
-                        : 'bg-white border-[#E2E8F0] text-[#0F172A]'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between mb-4">
-                      <div>
-                        <h4 className="text-base font-bold">Download Vasudevan's ATS Resume</h4>
-                        <p className={`text-xs mt-0.5 ${isDark ? 'text-slate-400' : 'text-[#64748B]'}`}>
-                          Please enter your details to receive & download the PDF.
-                        </p>
-                      </div>
-                      <button
-                        onClick={() => setShowPrompt(false)}
-                        className={`p-1.5 rounded-lg transition-colors ${
-                          isDark ? 'text-slate-400 hover:text-white' : 'text-slate-400 hover:text-black'
-                        }`}
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
-
-                    <form onSubmit={handlePromptSubmit} className="space-y-3.5">
-                      <div>
-                        <label className={`block text-xs font-mono uppercase mb-1 ${isDark ? 'text-slate-300' : 'text-[#475569]'}`}>
-                          Your Name / Company <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          required
-                          value={downloaderName}
-                          onChange={(e) => setDownloaderName(e.target.value)}
-                          placeholder="e.g. Priya Sharma"
-                          className={`w-full px-3.5 py-2.5 rounded-xl text-xs border focus:outline-none ${
-                            isDark
-                              ? 'bg-slate-800 border-slate-700 text-white placeholder-slate-500 focus:border-blue-500'
-                              : 'bg-white border-[#CBD5E1] text-[#0F172A] placeholder-[#94A3B8] focus:border-blue-600'
-                          }`}
-                        />
-                      </div>
-
-                      <div>
-                        <label className={`block text-xs font-mono uppercase mb-1 ${isDark ? 'text-slate-300' : 'text-[#475569]'}`}>
-                          Official Email Address <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                          type="email"
-                          required
-                          value={downloaderEmail}
-                          onChange={(e) => setDownloaderEmail(e.target.value)}
-                          placeholder="priya@company.com"
-                          className={`w-full px-3.5 py-2.5 rounded-xl text-xs border focus:outline-none ${
-                            isDark
-                              ? 'bg-slate-800 border-slate-700 text-white placeholder-slate-500 focus:border-blue-500'
-                              : 'bg-white border-[#CBD5E1] text-[#0F172A] placeholder-[#94A3B8] focus:border-blue-600'
-                          }`}
-                        />
-                      </div>
-
-                      {promptError && (
-                        <div className="text-xs text-red-500 font-mono">{promptError}</div>
-                      )}
-
-                      <div className="pt-2 flex items-center justify-end gap-2">
-                        <button
-                          type="button"
-                          onClick={() => setShowPrompt(false)}
-                          className={`px-4 py-2 rounded-xl text-xs font-medium ${
-                            isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-black'
-                          }`}
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          type="submit"
-                          className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md cursor-pointer"
-                        >
-                          <Download className="w-3.5 h-3.5" />
-                          <span>Download PDF</span>
-                        </button>
-                      </div>
-                    </form>
-                  </motion.div>
-                </div>
-              )}
-            </AnimatePresence>
             </div>
           </motion.div>
         </div>

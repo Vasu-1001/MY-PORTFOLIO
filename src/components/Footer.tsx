@@ -72,7 +72,7 @@ export const Footer: React.FC = () => {
           </div>
 
           {/* Social Icons & Back to Top */}
-          <div className="flex items-center gap-2.5">
+          <div className="flex flex-wrap items-center justify-center md:justify-start gap-2.5">
             {[
               { href: personalInfo.socials.github, icon: GithubIcon, label: 'GitHub Profile', title: 'GitHub', hover: 'hover:text-[#2563EB]' },
               { href: personalInfo.socials.linkedin, icon: LinkedinIcon, label: 'LinkedIn Profile', title: 'LinkedIn', hover: 'hover:text-[#2563EB]' },
@@ -87,7 +87,7 @@ export const Footer: React.FC = () => {
                   href={social.href}
                   target={social.href.startsWith('mailto') ? undefined : '_blank'}
                   rel={social.href.startsWith('mailto') ? undefined : 'noopener noreferrer'}
-                  className={`p-2 rounded-xl transition-all duration-200 ${social.hover} ${
+                  className={`p-2 rounded-xl transition-all duration-200 min-w-[38px] min-h-[38px] flex items-center justify-center ${social.hover} ${
                     isDark
                       ? 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white hover:border-slate-700'
                       : 'bg-white border border-[#E2E8F0] text-[#475569] hover:border-blue-300 shadow-sm'
@@ -102,7 +102,7 @@ export const Footer: React.FC = () => {
 
             <button
               onClick={scrollToTop}
-              className={`p-2 rounded-xl transition-all duration-200 ml-2 cursor-pointer ${
+              className={`p-2 rounded-xl transition-all duration-200 cursor-pointer min-w-[38px] min-h-[38px] flex items-center justify-center ${
                 isDark
                   ? 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white hover:border-slate-700'
                   : 'bg-white border border-[#E2E8F0] text-[#475569] hover:text-[#2563EB] hover:border-blue-300 shadow-sm'

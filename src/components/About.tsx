@@ -277,13 +277,13 @@ export const About: React.FC = () => {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="mt-16 pt-12 border-t border-slate-800/80"
         >
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
             {statistics.map((stat, idx) => {
               const Icon = statIcons[idx % statIcons.length];
               return (
                 <div
                   key={stat.label}
-                  className={`group relative rounded-2xl p-6 text-center transition-all duration-300 hover:-translate-y-1 ${
+                  className={`group relative rounded-2xl p-3.5 min-[400px]:p-5 sm:p-6 text-center transition-all duration-300 hover:-translate-y-1 ${
                     isLight
                       ? 'bg-white border border-[#E2E8F0] shadow-[0_4px_20px_rgba(15,23,42,0.06)] hover:border-blue-400 hover:shadow-[0_8px_30px_rgba(15,23,42,0.1)]'
                       : 'bg-slate-900/60 border border-slate-800 hover:border-slate-700'

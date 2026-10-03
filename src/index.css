@@ -33,7 +33,26 @@
     color-scheme: dark;
     background-color: var(--bg-main);
     color: var(--text-primary);
-    transition: background-color 250ms ease, color 250ms ease;
+    overflow-x: clip;
+    max-width: 100vw;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+  }
+
+  body {
+    overflow-x: clip;
+    max-width: 100vw;
+    width: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+  }
+
+  /* Clean touch interaction on mobile devices */
+  a, button {
+    -webkit-tap-highlight-color: transparent;
   }
 
   /* Light Mode Design System (Clean, Elegant Developer Portfolio Palette) */
@@ -106,7 +125,7 @@
 }
 
 /* Smooth theme switching without layout shifts */
-body, main, header, footer, section {
+body, header, footer {
   transition: background-color 250ms ease, border-color 250ms ease, color 250ms ease;
 }
 
@@ -649,5 +668,33 @@ html.theme-white #projects .from-blue-950\/70 {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* ==========================================================================
+   MOBILE ULTRA-FAST SCROLL PERFORMANCE OPTIMIZATIONS
+   ========================================================================== */
+@media (max-width: 768px) {
+  /* Eliminate heavy multi-pass Gaussian blur compositing on mobile GPU */
+  .backdrop-blur-xs,
+  .backdrop-blur-sm,
+  .backdrop-blur-md,
+  .backdrop-blur-lg,
+  .backdrop-blur-xl,
+  .backdrop-blur-2xl,
+  .backdrop-blur-3xl,
+  .glass-panel {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+
+  /* Stop continuous background scale transforms while mobile user scrolls */
+  .animate-aurora-glow {
+    animation: none !important;
+  }
+
+  /* GPU layout isolation for 60-120fps mobile fling momentum */
+  section {
+    contain: content;
   }
 }

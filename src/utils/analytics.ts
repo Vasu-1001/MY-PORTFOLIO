@@ -96,13 +96,8 @@ export const trackEvent = (eventName: string, params?: Record<string, any>): voi
 
 /**
  * Sends a background email notification to vasudevanr.dev@gmail.com when resume is downloaded
- * Includes Downloader Name & Email details
  */
-const sendResumeEmailAlert = (
-  linkText: string,
-  downloaderName: string = '',
-  downloaderEmail: string = ''
-): void => {
+const sendResumeEmailAlert = (linkText: string): void => {
   const targetEmail = import.meta.env.VITE_NOTIFICATION_EMAIL || 'vasudevanr.dev@gmail.com';
 
   if (typeof window === 'undefined') return;
@@ -115,12 +110,10 @@ const sendResumeEmailAlert = (
         'Accept': 'application/json',
       },
       body: JSON.stringify({
-        _subject: `📄 Resume Downloaded by ${downloaderName || 'a Visitor'}!`,
+        _subject: '📄 Alert: Someone Downloaded Your Resume!',
         _captcha: 'false',
         _template: 'table',
         Notification: 'Resume PDF Downloaded',
-        DownloaderName: downloaderName || 'Visitor (Not Provided)',
-        DownloaderEmail: downloaderEmail || 'Visitor Email (Not Provided)',
         FileName: 'Vasudevan_R_Resume.pdf',
         LinkText: linkText,
         Timestamp: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) + ' (IST)',
@@ -128,26 +121,20 @@ const sendResumeEmailAlert = (
         UserAgent: navigator.userAgent,
       }),
     })
-      .then(() => console.log(`[Email Alert Dispatched] Sent downloader info (${downloaderName}, ${downloaderEmail}) to ${targetEmail}`))
+      .then(() => console.log(`[Email Alert Dispatched] Background notification sent to ${targetEmail}`))
       .catch((err) => console.log('[Email Alert Notice]', err));
-  } catch (err) {
+  } catch {
     // Non-blocking notice swallow
   }
 };
 
 /**
- * Tracks Resume PDF download / view events with exact custom parameters & sends email notification with downloader details
+ * Tracks Resume PDF download / view events with exact custom parameters & sends email notification
  */
-export const trackResumeDownload = (
-  linkText: string = 'Resume',
-  downloaderName: string = '',
-  downloaderEmail: string = ''
-): void => {
+export const trackResumeDownload = (linkText: string = 'Resume'): void => {
   const payload = {
     file_name: 'Vasudevan_R_Resume.pdf',
     link_text: linkText,
-    downloader_name: downloaderName || 'Visitor',
-    downloader_email: downloaderEmail || 'Not Provided',
     file_extension: 'pdf',
     link_url: '/resume.pdf',
   };
@@ -156,7 +143,7 @@ export const trackResumeDownload = (
   console.log('[GA4 Event Triggered] resume_download:', payload);
 
   trackEvent('resume_download', payload);
-  sendResumeEmailAlert(linkText, downloaderName, downloaderEmail);
+  sendResumeEmailAlert(linkText);
 };
 
 /**

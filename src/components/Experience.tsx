@@ -22,7 +22,7 @@ export const Experience: React.FC = () => {
   });
 
   return (
-    <section id="experience" className="py-24 relative bg-slate-950/40">
+    <section id="experience" className="py-24 relative bg-slate-950/40 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="flex flex-col items-center sm:items-start mb-16 text-center sm:text-left">
@@ -73,13 +73,13 @@ export const Experience: React.FC = () => {
           {/* Dynamic Animated Scroll Progress Loading Line (Desktop) */}
           <motion.div
             style={{ scaleY }}
-            className="hidden md:block absolute left-1/2 -translate-x-1/2 top-6 bottom-6 w-[3px] origin-top bg-gradient-to-b from-blue-500 via-sky-400 to-cyan-300 shadow-[0_0_16px_rgba(56,189,248,0.9)] rounded-full z-0"
+            className="hidden md:block absolute left-1/2 -translate-x-1/2 top-6 bottom-6 w-[3px] origin-top bg-gradient-to-b from-blue-500 via-sky-400 to-cyan-300 shadow-[0_0_16px_rgba(56,189,248,0.9)] rounded-full z-0 will-change-transform translate-z-0"
           />
 
           {/* Dynamic Animated Scroll Progress Loading Line (Mobile) */}
           <motion.div
             style={{ scaleY }}
-            className="block md:hidden absolute left-5 -translate-x-1/2 top-6 bottom-6 w-[3px] origin-top bg-gradient-to-b from-blue-500 via-sky-400 to-cyan-300 shadow-[0_0_16px_rgba(56,189,248,0.9)] rounded-full z-0"
+            className="block md:hidden absolute left-5 -translate-x-1/2 top-6 bottom-6 w-[3px] origin-top bg-gradient-to-b from-blue-500 via-sky-400 to-cyan-300 shadow-[0_0_16px_rgba(56,189,248,0.9)] rounded-full z-0 will-change-transform translate-z-0"
           />
 
           <div className="space-y-12 sm:space-y-16">
@@ -101,7 +101,7 @@ export const Experience: React.FC = () => {
                         scale: 1.1,
                         opacity: 1,
                       }}
-                      viewport={{ once: false, margin: '-10% 0px -10% 0px' }}
+                      viewport={{ once: true, margin: '-10% 0px -10% 0px' }}
                       transition={{ duration: 0.3 }}
                       className={`w-5 h-5 rounded-full flex items-center justify-center ${
                         isLight
@@ -120,7 +120,7 @@ export const Experience: React.FC = () => {
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true, margin: '-50px' }}
                       transition={{ duration: 0.5, delay: idx * 0.1 }}
-                      className={`group rounded-2xl p-6 sm:p-8 backdrop-blur-md transition-all duration-300 text-left hover:-translate-y-1 ${
+                      className={`group rounded-2xl p-4 sm:p-8 backdrop-blur-md transition-all duration-300 text-left hover:-translate-y-1 ${
                         isLight
                           ? 'bg-white border border-[#E2E8F0] shadow-[0_4px_20px_rgba(15,23,42,0.06)] hover:border-blue-400 hover:shadow-[0_8px_30px_rgba(15,23,42,0.1)]'
                           : 'bg-slate-900/85 border border-slate-800 hover:border-blue-500/50 shadow-xl hover:shadow-[0_0_30px_rgba(56,189,248,0.12)]'
