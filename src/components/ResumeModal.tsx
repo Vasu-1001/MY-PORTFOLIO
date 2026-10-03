@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   X,
@@ -27,9 +27,69 @@ interface ResumeModalProps {
 
 export const ResumeModal: React.FC<ResumeModalProps> = ({ isOpen, onClose }) => {
   const { isDark } = useTheme();
+  const [showPrompt, setShowPrompt] = useState(false);
+  const [downloaderName, setDownloaderName] = useState('');
+  const [downloaderEmail, setDownloaderEmail] = useState('');
+  const [promptError, setPromptError] = useState('');
+
+  const triggerDownload = (name: string, email: string) => {
+    trackResumeDownload('Resume', name, email);
+
+    // Trigger PDF download programmatically
+    const a = document.createElement('a');
+    a.href = personalInfo.resumePath;
+    a.download = 'Vasudevan_R_Resume.pdf';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
+  const handleDownloadClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const saved = sessionStorage.getItem('downloader_info');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed.name && parsed.email) {
+          triggerDownload(parsed.name, parsed.email);
+          return;
+        }
+      } catch {
+        // Fallthrough
+      }
+    }
+    setShowPrompt(true);
+  };
+
+  const handlePromptSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!downloaderName.trim()) {
+      setPromptError('Please enter your name.');
+      return;
+    }
+    if (!downloaderEmail.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(downloaderEmail)) {
+      setPromptError('Please enter a valid official email address.');
+      return;
+    }
+
+    setPromptError('');
+    sessionStorage.setItem('downloader_info', JSON.stringify({ name: downloaderName, email: downloaderEmail }));
+    triggerDownload(downloaderName, downloaderEmail);
+    setShowPrompt(false);
+  };
 
   const handlePrint = () => {
-    trackResumeDownload('PrintResume');
+    const saved = sessionStorage.getItem('downloader_info');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        trackResumeDownload('PrintResume', parsed.name, parsed.email);
+      } catch {
+        trackResumeDownload('PrintResume');
+      }
+    } else {
+      trackResumeDownload('PrintResume');
+    }
     window.print();
   };
 
@@ -96,7 +156,7 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({ isOpen, onClose }) => 
                 <a
                   href={personalInfo.resumePath}
                   download="Vasudevan_R_Resume.pdf"
-                  onClick={() => trackResumeDownload('Resume')}
+                  onClick={handleDownloadClick}
                   className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer ${
                     isDark
                       ? 'bg-white hover:bg-slate-100 text-slate-950'
@@ -389,7 +449,7 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({ isOpen, onClose }) => 
                   <a
                     href={personalInfo.resumePath}
                     download="Vasudevan_R_Resume.pdf"
-                    onClick={() => trackResumeDownload('Resume')}
+                    onClick={handleDownloadClick}
                     className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs transition-all shadow-sm cursor-pointer ${
                       isDark
                         ? 'bg-white hover:bg-slate-100 text-slate-950'
@@ -401,6 +461,109 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({ isOpen, onClose }) => 
                   </a>
                 </div>
               </div>
+
+            {/* Quick Verification / Downloader Info Prompt Modal */}
+            <AnimatePresence>
+              {showPrompt && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    onClick={() => setShowPrompt(false)}
+                    className="fixed inset-0 bg-black/75 backdrop-blur-sm"
+                  />
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                    className={`relative w-full max-w-md rounded-2xl p-6 sm:p-7 shadow-2xl z-10 text-left border ${
+                      isDark
+                        ? 'bg-slate-900 border-slate-700/80 text-white'
+                        : 'bg-white border-[#E2E8F0] text-[#0F172A]'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-4">
+                      <div>
+                        <h4 className="text-base font-bold">Download Vasudevan's ATS Resume</h4>
+                        <p className={`text-xs mt-0.5 ${isDark ? 'text-slate-400' : 'text-[#64748B]'}`}>
+                          Please enter your details to receive & download the PDF.
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => setShowPrompt(false)}
+                        className={`p-1.5 rounded-lg transition-colors ${
+                          isDark ? 'text-slate-400 hover:text-white' : 'text-slate-400 hover:text-black'
+                        }`}
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    <form onSubmit={handlePromptSubmit} className="space-y-3.5">
+                      <div>
+                        <label className={`block text-xs font-mono uppercase mb-1 ${isDark ? 'text-slate-300' : 'text-[#475569]'}`}>
+                          Your Name / Company <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={downloaderName}
+                          onChange={(e) => setDownloaderName(e.target.value)}
+                          placeholder="e.g. Priya Sharma"
+                          className={`w-full px-3.5 py-2.5 rounded-xl text-xs border focus:outline-none ${
+                            isDark
+                              ? 'bg-slate-800 border-slate-700 text-white placeholder-slate-500 focus:border-blue-500'
+                              : 'bg-white border-[#CBD5E1] text-[#0F172A] placeholder-[#94A3B8] focus:border-blue-600'
+                          }`}
+                        />
+                      </div>
+
+                      <div>
+                        <label className={`block text-xs font-mono uppercase mb-1 ${isDark ? 'text-slate-300' : 'text-[#475569]'}`}>
+                          Official Email Address <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="email"
+                          required
+                          value={downloaderEmail}
+                          onChange={(e) => setDownloaderEmail(e.target.value)}
+                          placeholder="priya@company.com"
+                          className={`w-full px-3.5 py-2.5 rounded-xl text-xs border focus:outline-none ${
+                            isDark
+                              ? 'bg-slate-800 border-slate-700 text-white placeholder-slate-500 focus:border-blue-500'
+                              : 'bg-white border-[#CBD5E1] text-[#0F172A] placeholder-[#94A3B8] focus:border-blue-600'
+                          }`}
+                        />
+                      </div>
+
+                      {promptError && (
+                        <div className="text-xs text-red-500 font-mono">{promptError}</div>
+                      )}
+
+                      <div className="pt-2 flex items-center justify-end gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setShowPrompt(false)}
+                          className={`px-4 py-2 rounded-xl text-xs font-medium ${
+                            isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-black'
+                          }`}
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="submit"
+                          className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md cursor-pointer"
+                        >
+                          <Download className="w-3.5 h-3.5" />
+                          <span>Download PDF</span>
+                        </button>
+                      </div>
+                    </form>
+                  </motion.div>
+                </div>
+              )}
+            </AnimatePresence>
             </div>
           </motion.div>
         </div>
