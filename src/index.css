@@ -1,0 +1,653 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-sans: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+
+    /* Base default theme: Clean Tri-Color (Deep Black + Crisp White + Electric Blue) */
+    --bg-main: #040711;
+    --bg-surface: #080d1e;
+    --bg-secondary: #0c1228;
+    --bg-card: rgba(8, 13, 30, 0.85);
+    --bg-card-solid: #090e21;
+    --bg-card-subtle: rgba(15, 23, 42, 0.6);
+    --border-color: rgba(255, 255, 255, 0.08);
+    --border-hover: rgba(56, 189, 248, 0.4);
+    --accent-primary: #38bdf8;
+    --accent-secondary: #3b82f6;
+    --accent-glow: rgba(56, 189, 248, 0.25);
+    --text-primary: #ffffff;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+
+    --card-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+    --card-shadow-hover: 0 8px 32px rgba(56, 189, 248, 0.12);
+  }
+
+  html {
+    font-family: var(--font-sans);
+    color-scheme: dark;
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    transition: background-color 250ms ease, color 250ms ease;
+  }
+
+  /* Light Mode Design System (Clean, Elegant Developer Portfolio Palette) */
+  html.theme-white,
+  html.light {
+    color-scheme: light;
+    --bg-main: #F8FAFC;
+    --bg-surface: #FFFFFF;
+    --bg-secondary: #F1F5F9;
+    --bg-card: #FFFFFF;
+    --bg-card-solid: #FFFFFF;
+    --bg-card-subtle: #F8FAFC;
+    --border-color: #E2E8F0;
+    --border-hover: #CBD5E1;
+    --accent-primary: #2563EB;
+    --accent-secondary: #7C3AED;
+    --accent-glow: rgba(37, 99, 235, 0.15);
+    --text-primary: #0F172A;
+    --text-body: #334155;
+    --text-secondary: #475569;
+    --text-muted: #64748B;
+    --success: #059669;
+    --warning: #D97706;
+    --danger: #DC2626;
+
+    --card-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
+    --card-shadow-hover: 0 8px 30px rgba(15, 23, 42, 0.10);
+
+    background-color: #F8FAFC !important;
+    color: #0F172A !important;
+  }
+
+  /* Custom high-precision scrollbar */
+  ::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--bg-main);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #1e2640;
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #2b3558;
+  }
+
+  html.light ::-webkit-scrollbar-thumb,
+  html.theme-white ::-webkit-scrollbar-thumb {
+    background: #CBD5E1;
+  }
+
+  html.light ::-webkit-scrollbar-thumb:hover,
+  html.theme-white ::-webkit-scrollbar-thumb:hover {
+    background: #94A3B8;
+  }
+}
+
+/* Polished Glassmorphism & UI Panels */
+.glass-panel {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--card-shadow);
+}
+
+/* Smooth theme switching without layout shifts */
+body, main, header, footer, section {
+  transition: background-color 250ms ease, border-color 250ms ease, color 250ms ease;
+}
+
+/* Radiant Linear Gradients (Dark Default) */
+.text-gradient-aurora {
+  background: linear-gradient(135deg, #ffffff 0%, #38bdf8 55%, #2563eb 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-name {
+  background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 65%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Glowing Card Hover Utilities */
+.card-glow-aurora {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-glow-aurora:hover {
+  border-color: rgba(56, 189, 248, 0.4);
+  box-shadow: 0 0 30px rgba(56, 189, 248, 0.15), 0 20px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* Subtle Shimmer Animation */
+@keyframes aurora-pulse {
+  0%, 100% {
+    opacity: 0.10;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.18;
+    transform: scale(1.06);
+  }
+}
+
+.animate-aurora-glow {
+  animation: aurora-pulse 6s ease-in-out infinite;
+}
+
+/* ==========================================================================
+   LIGHT THEME OVERRIDES (Targeting html.light and html.theme-white)
+   ========================================================================== */
+
+/* 1. Typography & Text Gradients */
+html.light .text-gradient-name,
+html.theme-white .text-gradient-name {
+  background: linear-gradient(135deg, #0F172A 0%, #1E293B 70%, #2563EB 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+html.light .text-gradient-aurora,
+html.theme-white .text-gradient-aurora {
+  background: linear-gradient(135deg, #2563EB 0%, #0284C7 50%, #7C3AED 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+/* Headings in Light Mode */
+html.light h1,
+html.light h2,
+html.light h3,
+html.light h4,
+html.light h5,
+html.light h6,
+html.theme-white h1,
+html.theme-white h2,
+html.theme-white h3,
+html.theme-white h4,
+html.theme-white h5,
+html.theme-white h6 {
+  color: #0F172A !important;
+}
+
+/* Body Text in Light Mode */
+html.light p,
+html.theme-white p {
+  color: #334155;
+}
+
+/* Text Colors Hierarchy */
+html.light .text-white:not(button.bg-blue-600 *):not(button.bg-blue-500 *):not(button.bg-white.text-slate-950 *):not(a.bg-blue-600 *):not(a.bg-blue-500 *):not(a.bg-white.text-slate-950 *):not(button.bg-blue-600):not(a.bg-blue-600),
+html.theme-white .text-white:not(button.bg-blue-600 *):not(button.bg-blue-500 *):not(button.bg-white.text-slate-950 *):not(a.bg-blue-600 *):not(a.bg-blue-500 *):not(a.bg-white.text-slate-950 *):not(button.bg-blue-600):not(a.bg-blue-600) {
+  color: #0F172A !important;
+}
+
+html.light .text-slate-100,
+html.light .text-slate-200,
+html.theme-white .text-slate-100,
+html.theme-white .text-slate-200 {
+  color: #1E293B !important;
+}
+
+html.light .text-slate-300:not(button.bg-blue-600 *):not(a.bg-blue-600 *),
+html.theme-white .text-slate-300:not(button.bg-blue-600 *):not(a.bg-blue-600 *) {
+  color: #334155 !important;
+}
+
+html.light .text-slate-400,
+html.theme-white .text-slate-400 {
+  color: #475569 !important;
+}
+
+html.light .text-slate-500,
+html.theme-white .text-slate-500 {
+  color: #64748B !important;
+}
+
+/* Light Theme High-Contrast Accents for Pastels */
+html.light .text-blue-400,
+html.light .text-blue-300,
+html.light .text-blue-200,
+html.theme-white .text-blue-400,
+html.theme-white .text-blue-300,
+html.theme-white .text-blue-200 {
+  color: #1D4ED8 !important;
+}
+
+html.light .text-sky-400,
+html.light .text-sky-300,
+html.light .text-sky-200,
+html.theme-white .text-sky-400,
+html.theme-white .text-sky-300,
+html.theme-white .text-sky-200 {
+  color: #0369A1 !important;
+}
+
+html.light .text-cyan-400,
+html.light .text-cyan-300,
+html.light .text-cyan-200,
+html.theme-white .text-cyan-400,
+html.theme-white .text-cyan-300,
+html.theme-white .text-cyan-200 {
+  color: #0284C7 !important;
+}
+
+html.light .text-purple-400,
+html.light .text-purple-300,
+html.light .text-purple-200,
+html.theme-white .text-purple-400,
+html.theme-white .text-purple-300,
+html.theme-white .text-purple-200 {
+  color: #6D28D9 !important;
+}
+
+html.light .text-indigo-400,
+html.light .text-indigo-300,
+html.light .text-indigo-200,
+html.theme-white .text-indigo-400,
+html.theme-white .text-indigo-300,
+html.theme-white .text-indigo-200 {
+  color: #4338CA !important;
+}
+
+html.light .text-emerald-400,
+html.light .text-emerald-300,
+html.light .text-emerald-200,
+html.theme-white .text-emerald-400,
+html.theme-white .text-emerald-300,
+html.theme-white .text-emerald-200 {
+  color: #047857 !important;
+}
+
+html.light .text-amber-400,
+html.light .text-amber-300,
+html.light .text-amber-200,
+html.light .text-yellow-400,
+html.light .text-yellow-300,
+html.theme-white .text-amber-400,
+html.theme-white .text-amber-300,
+html.theme-white .text-amber-200,
+html.theme-white .text-yellow-400,
+html.theme-white .text-yellow-300 {
+  color: #B45309 !important;
+}
+
+html.light .text-rose-400,
+html.light .text-rose-300,
+html.theme-white .text-rose-400,
+html.theme-white .text-rose-300 {
+  color: #BE123C !important;
+}
+
+/* 2. Alternating Section Backgrounds */
+html.light section.bg-slate-950\/40,
+html.theme-white section.bg-slate-950\/40 {
+  background-color: #F1F5F9 !important;
+  box-shadow: none !important;
+  border-color: transparent !important;
+}
+
+/* 3. Universal Primary Surfaces & Cards */
+html.light .bg-slate-900,
+html.light .bg-slate-900\/80,
+html.light .bg-slate-900\/85,
+html.light .bg-slate-900\/90,
+html.light .bg-slate-900\/95,
+html.light .bg-slate-900\/70,
+html.light .bg-slate-900\/60,
+html.theme-white .bg-slate-900,
+html.theme-white .bg-slate-900\/80,
+html.theme-white .bg-slate-900\/85,
+html.theme-white .bg-slate-900\/90,
+html.theme-white .bg-slate-900\/95,
+html.theme-white .bg-slate-900\/70,
+html.theme-white .bg-slate-900\/60 {
+  background-color: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06) !important;
+}
+
+html.light .bg-slate-900:hover,
+html.light .bg-slate-900\/80:hover,
+html.light .bg-slate-900\/85:hover,
+html.light .bg-slate-900\/90:hover,
+html.theme-white .bg-slate-900:hover,
+html.theme-white .bg-slate-900\/80:hover,
+html.theme-white .bg-slate-900\/85:hover,
+html.theme-white .bg-slate-900\/90:hover {
+  border-color: #CBD5E1 !important;
+  box-shadow: 0 8px 30px rgba(15, 23, 42, 0.10) !important;
+}
+
+/* 4. Universal Secondary Surfaces, Inner Insets & Slate-950 */
+html.light .bg-slate-950,
+html.light .bg-slate-950\/90,
+html.light .bg-slate-950\/80,
+html.light .bg-slate-950\/75,
+html.light .bg-slate-950\/70,
+html.light .bg-slate-950\/60,
+html.theme-white .bg-slate-950,
+html.theme-white .bg-slate-950\/90,
+html.theme-white .bg-slate-950\/80,
+html.theme-white .bg-slate-950\/75,
+html.theme-white .bg-slate-950\/70,
+html.theme-white .bg-slate-950\/60 {
+  background-color: #F8FAFC !important;
+  border-color: #E2E8F0 !important;
+}
+
+/* 5. Sub-panels, Chips, Inset Badges in Slate-800 */
+html.light .bg-slate-800:not(button.bg-blue-600 *):not(a.bg-blue-600 *),
+html.light .bg-slate-800\/80:not(button.bg-blue-600 *):not(a.bg-blue-600 *),
+html.light .bg-slate-800\/90:not(button.bg-blue-600 *):not(a.bg-blue-600 *),
+html.light .bg-slate-800\/70,
+html.light .bg-slate-800\/60,
+html.light .bg-slate-800\/50,
+html.light .bg-slate-800\/40,
+html.light .bg-slate-700\/60,
+html.light .bg-slate-700\/50,
+html.theme-white .bg-slate-800:not(button.bg-blue-600 *):not(a.bg-blue-600 *),
+html.theme-white .bg-slate-800\/80:not(button.bg-blue-600 *):not(a.bg-blue-600 *),
+html.theme-white .bg-slate-800\/90:not(button.bg-blue-600 *):not(a.bg-blue-600 *),
+html.theme-white .bg-slate-800\/70,
+html.theme-white .bg-slate-800\/60,
+html.theme-white .bg-slate-800\/50,
+html.theme-white .bg-slate-800\/40,
+html.theme-white .bg-slate-700\/60,
+html.theme-white .bg-slate-700\/50 {
+  background-color: #F1F5F9 !important;
+  color: #334155 !important;
+  border-color: #CBD5E1 !important;
+}
+
+/* 6. Universal Borders in Light Mode */
+html.light .border-slate-800,
+html.light .border-slate-800\/80,
+html.light .border-slate-800\/60,
+html.light .border-slate-800\/50,
+html.light .border-slate-700,
+html.light .border-slate-700\/80,
+html.light .border-slate-700\/60,
+html.light .border-slate-700\/50,
+html.light .border-slate-600,
+html.theme-white .border-slate-800,
+html.theme-white .border-slate-800\/80,
+html.theme-white .border-slate-800\/60,
+html.theme-white .border-slate-800\/50,
+html.theme-white .border-slate-700,
+html.theme-white .border-slate-700\/80,
+html.theme-white .border-slate-700\/60,
+html.theme-white .border-slate-700\/50,
+html.theme-white .border-slate-600 {
+  border-color: #E2E8F0 !important;
+}
+
+/* 7. Badges, Pills & Tags System */
+
+/* Blue Badges */
+html.light .bg-blue-950\/70,
+html.light .bg-blue-950\/60,
+html.light .bg-blue-950\/50,
+html.light .bg-blue-900\/80,
+html.light .bg-blue-900\/50,
+html.light .bg-blue-500\/10,
+html.light .bg-blue-500\/15,
+html.light .bg-blue-500\/20,
+html.theme-white .bg-blue-950\/70,
+html.theme-white .bg-blue-950\/60,
+html.theme-white .bg-blue-950\/50,
+html.theme-white .bg-blue-900\/80,
+html.theme-white .bg-blue-900\/50,
+html.theme-white .bg-blue-500\/10,
+html.theme-white .bg-blue-500\/15,
+html.theme-white .bg-blue-500\/20 {
+  background-color: #EFF6FF !important;
+  color: #1D4ED8 !important;
+  border-color: #BFDBFE !important;
+}
+
+/* Purple / Violet Badges */
+html.light .bg-purple-950\/70,
+html.light .bg-purple-950\/60,
+html.light .bg-purple-500\/10,
+html.light .bg-purple-500\/15,
+html.light .bg-violet-950\/60,
+html.light .bg-violet-500\/10,
+html.theme-white .bg-purple-950\/70,
+html.theme-white .bg-purple-950\/60,
+html.theme-white .bg-purple-500\/10,
+html.theme-white .bg-purple-500\/15,
+html.theme-white .bg-violet-950\/60,
+html.theme-white .bg-violet-500\/10 {
+  background-color: #F5F3FF !important;
+  color: #6D28D9 !important;
+  border-color: #DDD6FE !important;
+}
+
+/* Green / Emerald Badges */
+html.light .bg-emerald-950\/70,
+html.light .bg-emerald-950\/60,
+html.light .bg-emerald-500\/10,
+html.light .bg-emerald-500\/15,
+html.theme-white .bg-emerald-950\/70,
+html.theme-white .bg-emerald-950\/60,
+html.theme-white .bg-emerald-500\/10,
+html.theme-white .bg-emerald-500\/15 {
+  background-color: #ECFDF5 !important;
+  color: #047857 !important;
+  border-color: #A7F3D0 !important;
+}
+
+/* Amber / Yellow / Orange Badges */
+html.light .bg-amber-950\/70,
+html.light .bg-amber-950\/60,
+html.light .bg-amber-500\/10,
+html.light .bg-amber-500\/15,
+html.light .bg-yellow-500\/10,
+html.light .bg-orange-600\/25,
+html.theme-white .bg-amber-950\/70,
+html.theme-white .bg-amber-950\/60,
+html.theme-white .bg-amber-500\/10,
+html.theme-white .bg-amber-500\/15,
+html.theme-white .bg-yellow-500\/10,
+html.theme-white .bg-orange-600\/25 {
+  background-color: #FFFBEB !important;
+  color: #B45309 !important;
+  border-color: #FDE68A !important;
+}
+
+/* Indigo & Cyan Badges */
+html.light .bg-indigo-950\/70,
+html.light .bg-indigo-950\/60,
+html.light .bg-indigo-500\/10,
+html.light .bg-indigo-500\/15,
+html.light .bg-cyan-950\/70,
+html.light .bg-cyan-950\/60,
+html.light .bg-cyan-500\/10,
+html.light .bg-cyan-500\/15,
+html.theme-white .bg-indigo-950\/70,
+html.theme-white .bg-indigo-950\/60,
+html.theme-white .bg-indigo-500\/10,
+html.theme-white .bg-indigo-500\/15,
+html.theme-white .bg-cyan-950\/70,
+html.theme-white .bg-cyan-950\/60,
+html.theme-white .bg-cyan-500\/10,
+html.theme-white .bg-cyan-500\/15 {
+  background-color: #EFF6FF !important;
+  color: #1D4ED8 !important;
+  border-color: #BFDBFE !important;
+}
+
+/* Rose & Red Badges */
+html.light .bg-rose-950\/60,
+html.light .bg-rose-950\/70,
+html.light .bg-rose-500\/10,
+html.light .bg-rose-500\/15,
+html.light .bg-red-950\/60,
+html.light .bg-red-950\/70,
+html.theme-white .bg-rose-950\/60,
+html.theme-white .bg-rose-950\/70,
+html.theme-white .bg-rose-500\/10,
+html.theme-white .bg-rose-500\/15,
+html.theme-white .bg-red-950\/60,
+html.theme-white .bg-red-950\/70 {
+  background-color: #FFF1F2 !important;
+  color: #BE123C !important;
+  border-color: #FECDD3 !important;
+}
+
+/* 8. Skills Section Specifics */
+html.light #skills .rounded-2xl,
+html.theme-white #skills .rounded-2xl {
+  background-color: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06) !important;
+}
+
+html.light #skills input,
+html.theme-white #skills input {
+  background-color: #FFFFFF !important;
+  border-color: #CBD5E1 !important;
+  color: #0F172A !important;
+}
+
+html.light #skills input::placeholder,
+html.theme-white #skills input::placeholder {
+  color: #94A3B8 !important;
+}
+
+/* 9. Contact Form Input Fields */
+html.light #contact input,
+html.light #contact textarea,
+html.theme-white #contact input,
+html.theme-white #contact textarea {
+  background-color: #FFFFFF !important;
+  border-color: #CBD5E1 !important;
+  color: #0F172A !important;
+}
+
+html.light #contact input::placeholder,
+html.light #contact textarea::placeholder,
+html.theme-white #contact input::placeholder,
+html.theme-white #contact textarea::placeholder {
+  color: #94A3B8 !important;
+}
+
+html.light #contact input:focus,
+html.light #contact textarea:focus,
+html.theme-white #contact input:focus,
+html.theme-white #contact textarea:focus {
+  border-color: #2563EB !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18) !important;
+  outline: none !important;
+}
+
+/* 10. Buttons & Actions Contrast Protection */
+html.light button.bg-white.text-slate-950,
+html.light a.bg-white.text-slate-950,
+html.theme-white button.bg-white.text-slate-950,
+html.theme-white a.bg-white.text-slate-950 {
+  background-color: #2563EB !important;
+  color: #FFFFFF !important;
+  border-color: #2563EB !important;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25) !important;
+}
+
+html.light button.bg-white.text-slate-950 *,
+html.light a.bg-white.text-slate-950 *,
+html.theme-white button.bg-white.text-slate-950 *,
+html.theme-white a.bg-white.text-slate-950 * {
+  color: #FFFFFF !important;
+}
+
+/* Secondary Action Buttons */
+html.light button.bg-slate-900\/90:not(.filter-btn),
+html.light a.bg-slate-900\/90:not(.filter-btn),
+html.theme-white button.bg-slate-900\/90:not(.filter-btn),
+html.theme-white a.bg-slate-900\/90:not(.filter-btn) {
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
+  border-color: #E2E8F0 !important;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04) !important;
+}
+
+/* Keep Blue CTA Buttons white-text */
+html.light button.bg-blue-600,
+html.light a.bg-blue-600,
+html.theme-white button.bg-blue-600,
+html.theme-white a.bg-blue-600 {
+  background-color: #2563EB !important;
+  color: #FFFFFF !important;
+}
+
+html.light button.bg-blue-600 *,
+html.light a.bg-blue-600 *,
+html.theme-white button.bg-blue-600 *,
+html.theme-white a.bg-blue-600 * {
+  color: #FFFFFF !important;
+}
+
+/* 11. Achievements Horizontal Scrollers */
+html.light #achievements .border-slate-800,
+html.theme-white #achievements .border-slate-800 {
+  border-color: #E2E8F0 !important;
+}
+
+html.light #achievements .bg-slate-900\/80 button,
+html.theme-white #achievements .bg-slate-900\/80 button {
+  background-color: #FFFFFF !important;
+  color: #475569 !important;
+  border-color: #E2E8F0 !important;
+}
+
+html.light #achievements .bg-slate-900\/80 button:hover,
+html.theme-white #achievements .bg-slate-900\/80 button:hover {
+  background-color: #F8FAFC !important;
+  color: #0F172A !important;
+}
+
+/* 12. Timeline center guide line in Experience */
+html.light #experience .bg-slate-800\/80,
+html.theme-white #experience .bg-slate-800\/80 {
+  background-color: #E2E8F0 !important;
+}
+
+html.light #experience .bg-slate-950.border-2.border-sky-400,
+html.theme-white #experience .bg-slate-950.border-2.border-sky-400 {
+  background-color: #FFFFFF !important;
+  border-color: #2563EB !important;
+  box-shadow: 0 0 12px rgba(37, 99, 235, 0.4) !important;
+}
+
+/* 13. Flagship Project Ribbon in Projects */
+html.light #projects .from-blue-950\/70,
+html.theme-white #projects .from-blue-950\/70 {
+  background: linear-gradient(to right, #EFF6FF, #F8FAFC, #FFFFFF) !important;
+  border-color: #E2E8F0 !important;
+}
+
+/* Reduced motion accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
