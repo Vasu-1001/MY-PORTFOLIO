@@ -96,7 +96,7 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({ isOpen, onClose }) => 
                 <a
                   href={personalInfo.resumePath}
                   download="Vasudevan_R_Resume.pdf"
-                  onClick={() => trackResumeDownload('ResumeModalTop')}
+                  onClick={() => trackResumeDownload('Resume')}
                   className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer ${
                     isDark
                       ? 'bg-white hover:bg-slate-100 text-slate-950'
@@ -389,7 +389,7 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({ isOpen, onClose }) => 
                   <a
                     href={personalInfo.resumePath}
                     download="Vasudevan_R_Resume.pdf"
-                    onClick={() => trackResumeDownload('ResumeModalBottom')}
+                    onClick={() => trackResumeDownload('Resume')}
                     className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs transition-all shadow-sm cursor-pointer ${
                       isDark
                         ? 'bg-white hover:bg-slate-100 text-slate-950'
