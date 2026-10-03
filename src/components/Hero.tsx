@@ -162,48 +162,47 @@ export const Hero: React.FC<HeroProps> = ({ onOpenResume }) => {
               & AWS Cloud.
             </motion.p>
 
-            {/* Primary Action Buttons + Social Links (Unified in One Clean Row) */}
+            {/* Primary Action Buttons & Social Links */}
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
-              className="pt-2 flex flex-col sm:flex-row sm:items-center gap-4"
+              className="pt-2 space-y-4"
             >
-              {/* Primary Download Resume with Glowing Aura */}
-              <button
-                onClick={() => {
-                  trackResumeDownload('Resume');
-                  onOpenResume();
-                }}
-                className={`inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-bold text-sm transition-all duration-200 hover:-translate-y-0.5 cursor-pointer ${
-                  isDark
-                    ? 'bg-white hover:bg-slate-100 text-slate-950 shadow-[0_0_25px_rgba(56,189,248,0.25)] hover:shadow-[0_0_35px_rgba(56,189,248,0.4)]'
-                    : 'bg-[#2563EB] hover:bg-[#1D4ED8] text-white shadow-[0_4px_16px_rgba(37,99,235,0.25)] hover:shadow-[0_6px_22px_rgba(37,99,235,0.35)]'
-                }`}
-              >
-                <Download className={`w-4 h-4 ${isDark ? 'text-slate-950' : 'text-white'}`} />
-                <span>Download Resume (PDF)</span>
-              </button>
+              {/* Row 1: Action Buttons */}
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3.5">
+                {/* Primary Download Resume with Glowing Aura */}
+                <button
+                  onClick={() => {
+                    trackResumeDownload('Resume');
+                    onOpenResume();
+                  }}
+                  className={`inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-bold text-sm transition-all duration-200 hover:-translate-y-0.5 cursor-pointer ${
+                    isDark
+                      ? 'bg-white hover:bg-slate-100 text-slate-950 shadow-[0_0_25px_rgba(56,189,248,0.25)] hover:shadow-[0_0_35px_rgba(56,189,248,0.4)]'
+                      : 'bg-[#2563EB] hover:bg-[#1D4ED8] text-white shadow-[0_4px_16px_rgba(37,99,235,0.25)] hover:shadow-[0_6px_22px_rgba(37,99,235,0.35)]'
+                  }`}
+                >
+                  <Download className={`w-4 h-4 ${isDark ? 'text-slate-950' : 'text-white'}`} />
+                  <span>Download Resume (PDF)</span>
+                </button>
 
-              {/* View Projects Button */}
-              <button
-                onClick={scrollToProjects}
-                className={`inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl font-medium text-sm transition-all duration-200 hover:-translate-y-0.5 cursor-pointer ${
-                  isDark
-                    ? 'bg-slate-900/90 hover:bg-slate-800 text-slate-200 hover:text-white border border-slate-700/80 hover:border-blue-500/50 shadow-sm'
-                    : 'bg-white hover:bg-slate-50 text-[#0F172A] border border-[#E2E8F0] hover:border-blue-400 shadow-sm'
-                }`}
-              >
-                <span>View Projects</span>
-                <ArrowRight className="w-4 h-4 text-blue-500" />
-              </button>
+                {/* View Projects Button */}
+                <button
+                  onClick={scrollToProjects}
+                  className={`inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl font-medium text-sm transition-all duration-200 hover:-translate-y-0.5 cursor-pointer ${
+                    isDark
+                      ? 'bg-slate-900/90 hover:bg-slate-800 text-slate-200 hover:text-white border border-slate-700/80 hover:border-blue-500/50 shadow-sm'
+                      : 'bg-white hover:bg-slate-50 text-[#0F172A] border border-[#E2E8F0] hover:border-blue-400 shadow-sm'
+                  }`}
+                >
+                  <span>View Projects</span>
+                  <ArrowRight className="w-4 h-4 text-blue-500" />
+                </button>
+              </div>
 
-              {/* Clean Social Profiles Group */}
-              <div
-                className={`flex flex-wrap items-center gap-2 sm:pl-2 pt-2 sm:pt-0 ${
-                  isDark ? 'sm:border-l sm:border-slate-800/80' : 'sm:border-l sm:border-[#E2E8F0]'
-                }`}
-              >
+              {/* Row 2: 5 Social Profile Links placed directly below */}
+              <div className="flex flex-wrap items-center gap-2.5 pt-1">
                 {[
                   { href: personalInfo.socials.github, icon: GithubIcon, label: 'GitHub Profile', title: 'GitHub' },
                   { href: personalInfo.socials.linkedin, icon: LinkedinIcon, label: 'LinkedIn Profile', title: 'LinkedIn' },
@@ -218,7 +217,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenResume }) => {
                       href={s.href}
                       target={s.href.startsWith('mailto') ? undefined : '_blank'}
                       rel={s.href.startsWith('mailto') ? undefined : 'noopener noreferrer'}
-                      className={`p-2.5 rounded-xl transition-all hover:scale-105 min-w-[38px] min-h-[38px] flex items-center justify-center ${
+                      className={`p-2.5 rounded-xl transition-all hover:scale-105 min-w-[40px] min-h-[40px] flex items-center justify-center ${
                         isDark
                           ? 'bg-slate-900/90 hover:bg-slate-800 border border-slate-800 hover:border-blue-500/50 text-slate-400 hover:text-white'
                           : 'bg-white hover:bg-slate-50 border border-[#E2E8F0] hover:border-blue-400 text-[#475569] hover:text-[#2563EB] shadow-sm'
