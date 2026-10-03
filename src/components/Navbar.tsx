@@ -20,6 +20,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenResume }) => {
   const [paletteOpen, setPaletteOpen] = useState(false);
   const { theme, setTheme, isDark } = useTheme();
   const paletteRef = useRef<HTMLDivElement>(null);
+  const mobilePaletteRef = useRef<HTMLDivElement>(null);
 
   // Close menus on Escape key
   useEffect(() => {
@@ -33,17 +34,24 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenResume }) => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  // Close palette dropdown when clicking outside
+  // Close palette dropdown when clicking outside (works on desktop mouse and mobile touch)
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (paletteRef.current && !paletteRef.current.contains(e.target as Node)) {
+    const handleClickOutside = (e: MouseEvent | TouchEvent) => {
+      const target = e.target as Node;
+      const insideDesktop = paletteRef.current && paletteRef.current.contains(target);
+      const insideMobile = mobilePaletteRef.current && mobilePaletteRef.current.contains(target);
+      if (!insideDesktop && !insideMobile) {
         setPaletteOpen(false);
       }
     };
     if (paletteOpen) {
       document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside);
     }
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
   }, [paletteOpen]);
 
   // Lock body vertical scroll when mobile drawer is open to prevent accidental background scroll
@@ -91,6 +99,58 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenResume }) => {
       target.scrollIntoView({ behavior: 'smooth' });
     }
   };
+
+  const renderThemeDropdown = (alignClass = 'right-0') => (
+    <AnimatePresence>
+      {paletteOpen && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95, y: 10 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.95, y: 10 }}
+          transition={{ duration: 0.15 }}
+          className={`absolute ${alignClass} mt-2 w-52 sm:w-56 rounded-xl border p-1.5 z-50 text-xs shadow-2xl ${
+            isDark
+              ? 'bg-slate-900/98 border-slate-700/80 text-slate-200'
+              : 'bg-white border-[#E2E8F0] text-[#0F172A] shadow-[0_10px_30px_rgba(15,23,42,0.15)]'
+          }`}
+        >
+          <div
+            className={`px-2.5 py-1.5 font-mono text-[10px] uppercase tracking-wider border-b mb-1 ${
+              isDark
+                ? 'text-slate-400 border-slate-800'
+                : 'text-[#64748B] border-[#F1F5F9]'
+            }`}
+          >
+            Theme Style
+          </div>
+          {themeOptions.map((opt) => (
+            <button
+              key={opt.id}
+              onClick={() => {
+                setTheme(opt.id);
+                setPaletteOpen(false);
+              }}
+              className={`w-full flex items-center justify-between px-2.5 py-2 rounded-lg transition-colors cursor-pointer text-left ${
+                theme === opt.id
+                  ? isDark
+                    ? 'bg-blue-600/15 text-blue-300 font-semibold'
+                    : 'bg-[#EFF6FF] text-[#2563EB] font-bold'
+                  : isDark
+                  ? 'text-slate-300 hover:bg-slate-800'
+                  : 'text-[#475569] hover:bg-[#F8FAFC]'
+              }`}
+            >
+              <div className="flex items-center gap-2.5">
+                <span className={`w-3 h-3 rounded-full ${opt.dotColor}`} />
+                <span>{opt.label}</span>
+              </div>
+              {theme === opt.id && <Check className="w-3.5 h-3.5 text-blue-500" />}
+            </button>
+          ))}
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
 
   return (
     <header
@@ -192,7 +252,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenResume }) => {
           })}
         </nav>
 
-        {/* Right actions: Theme Palette Switcher + Resume Button */}
+        {/* Right actions: Desktop Theme Palette Switcher + Resume Button */}
         <div className="hidden sm:flex items-center gap-3">
           {/* Theme Palette Switcher (Two Options: This Color and White Color) */}
           <div ref={paletteRef} className="relative">
@@ -208,56 +268,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenResume }) => {
             >
               <Palette className="w-4 h-4 text-blue-500" />
             </button>
-
-            <AnimatePresence>
-              {paletteOpen && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                  transition={{ duration: 0.15 }}
-                  className={`absolute right-0 mt-2 w-56 rounded-xl border p-1.5 z-50 text-xs shadow-2xl ${
-                    isDark
-                      ? 'bg-slate-900 border-slate-700/80 text-slate-200'
-                      : 'bg-white border-[#E2E8F0] text-[#0F172A] shadow-[0_10px_30px_rgba(15,23,42,0.12)]'
-                  }`}
-                >
-                  <div
-                    className={`px-2.5 py-1.5 font-mono text-[10px] uppercase tracking-wider border-b mb-1 ${
-                      isDark
-                        ? 'text-slate-400 border-slate-800'
-                        : 'text-[#64748B] border-[#F1F5F9]'
-                    }`}
-                  >
-                    Theme Style
-                  </div>
-                  {themeOptions.map((opt) => (
-                    <button
-                      key={opt.id}
-                      onClick={() => {
-                        setTheme(opt.id);
-                        setPaletteOpen(false);
-                      }}
-                      className={`w-full flex items-center justify-between px-2.5 py-2 rounded-lg transition-colors cursor-pointer text-left ${
-                        theme === opt.id
-                          ? isDark
-                            ? 'bg-blue-600/15 text-blue-300 font-semibold'
-                            : 'bg-[#EFF6FF] text-[#2563EB] font-bold'
-                          : isDark
-                          ? 'text-slate-300 hover:bg-slate-800'
-                          : 'text-[#475569] hover:bg-[#F8FAFC]'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <span className={`w-3 h-3 rounded-full ${opt.dotColor}`} />
-                        <span>{opt.label}</span>
-                      </div>
-                      {theme === opt.id && <Check className="w-3.5 h-3.5 text-blue-500" />}
-                    </button>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {renderThemeDropdown('right-0')}
           </div>
 
           {/* Resume Button */}
@@ -280,22 +291,34 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenResume }) => {
           </button>
         </div>
 
-        {/* Mobile menu button */}
+        {/* Mobile menu and Theme palette buttons */}
         <div className="flex sm:hidden items-center gap-2">
-          <button
-            onClick={() => setPaletteOpen(!paletteOpen)}
-            className={`min-w-[40px] min-h-[40px] p-2 rounded-xl border flex items-center justify-center cursor-pointer ${
-              isDark
-                ? 'border-slate-800 bg-slate-900/60 text-blue-400'
-                : 'border-[#E2E8F0] bg-white text-blue-600 shadow-sm'
-            }`}
-            aria-label="Toggle theme palette"
-          >
-            <Palette className="w-4 h-4" />
-          </button>
+          {/* Mobile Theme Palette Switcher */}
+          <div ref={mobilePaletteRef} className="relative">
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                setPaletteOpen(!paletteOpen);
+              }}
+              className={`min-w-[40px] min-h-[40px] p-2 rounded-xl border flex items-center justify-center cursor-pointer transition-colors ${
+                isDark
+                  ? 'border-slate-800 bg-slate-900/60 text-blue-400 hover:text-white'
+                  : 'border-[#E2E8F0] bg-white text-blue-600 shadow-sm'
+              }`}
+              aria-label="Toggle theme palette"
+              title="Theme Style"
+            >
+              <Palette className="w-4 h-4" />
+            </button>
+            {renderThemeDropdown('right-0')}
+          </div>
 
+          {/* Mobile Navigation Drawer Toggle */}
           <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            onClick={() => {
+              setPaletteOpen(false);
+              setMobileMenuOpen(!mobileMenuOpen);
+            }}
             className={`min-w-[40px] min-h-[40px] p-2 rounded-xl border flex items-center justify-center cursor-pointer ${
               isDark
                 ? 'border-slate-800 bg-slate-900/60 text-slate-300 hover:text-white'
